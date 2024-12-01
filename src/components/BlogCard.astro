@@ -1,0 +1,54 @@
+---
+interface Props {
+  title: string;
+  excerpt: string;
+  image: string;
+  date: string;
+  author: {
+    name: string;
+    avatar: string;
+  };
+  category: string;
+  readTime: string;
+}
+
+const { title, excerpt, image, date, author, category, readTime } = Astro.props;
+---
+
+<article class="glass-card rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+  <div class="relative">
+    <img 
+      src={image} 
+      alt={title}
+      class="w-full h-52 object-cover"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+    <span class="absolute top-4 left-4 bg-white/90 text-primary px-4 py-1 rounded-full text-sm font-medium backdrop-blur-sm">
+      {category}
+    </span>
+  </div>
+  <div class="p-8">
+    <h2 class="text-2xl font-semibold mb-3 hover:text-primary transition-colors line-clamp-2">
+      <a href={`/blog/${title.toLowerCase().replace(/ /g, '-')}`}>
+        {title}
+      </a>
+    </h2>
+    <p class="text-gray-600 mb-6 line-clamp-2">
+      {excerpt}
+    </p>
+    <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+      <div class="flex items-center">
+        <img 
+          src={author.avatar} 
+          alt={author.name}
+          class="w-10 h-10 rounded-full object-cover mr-3 ring-2 ring-primary/10"
+        />
+        <div>
+          <p class="text-gray-900 font-medium">{author.name}</p>
+          <p class="text-gray-500 text-sm">{date}</p>
+        </div>
+      </div>
+      <span class="text-sm text-primary font-medium">{readTime} read</span>
+    </div>
+  </div>
+</article>

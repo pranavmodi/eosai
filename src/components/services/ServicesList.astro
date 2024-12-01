@@ -1,0 +1,70 @@
+---
+import ServiceCard from './cards/ServiceCard.astro';
+import SectionHeader from '../shared/SectionHeader.astro';
+
+const services = [
+  {
+    title: 'AI Strategy Consulting',
+    description: 'Develop a comprehensive AI roadmap aligned with your business objectives. We help identify opportunities, assess readiness, and create implementation plans.',
+    icon: 'lightbulb',
+    features: [
+      'AI Readiness Assessment',
+      'Strategic Planning',
+      'ROI Analysis',
+      'Risk Management'
+    ],
+    gradient: 'from-blue-500 to-indigo-500'
+  },
+  {
+    title: 'Machine Learning Solutions',
+    description: 'Custom machine learning solutions designed to solve your specific business challenges and unlock new opportunities for growth.',
+    icon: 'psychology',
+    features: [
+      'Predictive Analytics',
+      'Pattern Recognition',
+      'Data Mining',
+      'Automated Decision Making'
+    ],
+    gradient: 'from-indigo-500 to-purple-500'
+  },
+  {
+    title: 'AI Implementation',
+    description: 'End-to-end implementation of AI solutions, from proof of concept to production deployment, ensuring seamless integration with your existing systems.',
+    icon: 'settings',
+    features: [
+      'System Integration',
+      'Infrastructure Setup',
+      'Model Deployment',
+      'Performance Monitoring'
+    ],
+    gradient: 'from-purple-500 to-pink-500'
+  },
+  {
+    title: 'AI Training & Support',
+    description: 'Comprehensive training programs and ongoing support to help your team maximize the value of AI implementations.',
+    icon: 'school',
+    features: [
+      'Technical Training',
+      'Best Practices',
+      '24/7 Support',
+      'Performance Optimization'
+    ],
+    gradient: 'from-pink-500 to-rose-500'
+  }
+];
+---
+
+<section class="py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <SectionHeader
+      title="Our Services"
+      subtitle="Comprehensive AI solutions tailored to drive your business forward"
+      alignment="left"
+    />
+    <div class="grid md:grid-cols-2 gap-8 mt-12">
+      {services.map(service => (
+        <ServiceCard {...service} />
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,32 @@
+---
+import { blogPosts } from '../../data/blogPosts';
+import BlogCard from '../BlogCard.astro';
+import SectionTitle from '../shared/SectionTitle.astro';
+
+const featuredPosts = blogPosts.slice(0, 3);
+---
+
+<section class="py-20 bg-gradient-to-b from-white to-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <SectionTitle
+      title="Latest Insights"
+      subtitle="Stay updated with the latest trends and developments in AI"
+    />
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12 mt-16">
+      {featuredPosts.map(post => (
+        <BlogCard {...post} />
+      ))}
+    </div>
+
+    <div class="text-center">
+      <a
+        href="/blog"
+        class="inline-flex items-center px-8 py-3 rounded-full bg-primary text-white font-semibold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25 hover:shadow-xl"
+      >
+        View All Articles
+        <span class="material-icons ml-2">arrow_forward</span>
+      </a>
+    </div>
+  </div>
+</section>

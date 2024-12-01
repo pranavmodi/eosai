@@ -1,0 +1,62 @@
+---
+interface Milestone {
+  year: string;
+  title: string;
+  description: string;
+}
+
+const milestones: Milestone[] = [
+  {
+    year: "2020",
+    title: "Company Founded",
+    description: "Eos AI was established with a vision to democratize AI technology."
+  },
+  {
+    year: "2021",
+    title: "Global Expansion",
+    description: "Opened offices in Europe and Asia to serve international clients."
+  },
+  {
+    year: "2022",
+    title: "Innovation Award",
+    description: "Recognized for breakthrough AI solutions in enterprise applications."
+  },
+  {
+    year: "2023",
+    title: "Research Center",
+    description: "Launched our AI Research Center focusing on next-gen AI technologies."
+  }
+];
+---
+
+<section class="py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+        Our Journey
+      </h2>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+        A timeline of innovation and growth in AI excellence
+      </p>
+    </div>
+
+    <div class="space-y-8">
+      {milestones.map((milestone, index) => (
+        <div class="flex items-start">
+          <div class="flex flex-col items-center mr-8">
+            <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+              {milestone.year.substring(2)}
+            </div>
+            {index !== milestones.length - 1 && (
+              <div class="w-0.5 h-24 bg-gradient-to-b from-primary to-primary/10"></div>
+            )}
+          </div>
+          <div class="glass-card p-6 rounded-xl flex-1 hover:shadow-lg transition-all duration-300">
+            <h3 class="text-xl font-semibold mb-2">{milestone.title}</h3>
+            <p class="text-gray-600">{milestone.description}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

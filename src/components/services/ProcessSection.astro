@@ -1,0 +1,45 @@
+---
+import SectionHeader from '../shared/SectionHeader.astro';
+import ProcessStep from './steps/ProcessStep.astro';
+
+const steps = [
+  {
+    number: '01',
+    title: 'Discovery',
+    description: 'We analyze your business needs and identify opportunities for AI implementation.',
+    icon: 'search'
+  },
+  {
+    number: '02',
+    title: 'Strategy',
+    description: 'Develop a comprehensive plan aligned with your business objectives.',
+    icon: 'strategy'
+  },
+  {
+    number: '03',
+    title: 'Implementation',
+    description: 'Execute the solution with our expert team of AI engineers.',
+    icon: 'engineering'
+  },
+  {
+    number: '04',
+    title: 'Optimization',
+    description: 'Continuous monitoring and improvement of AI solutions.',
+    icon: 'trending_up'
+  }
+];
+---
+
+<section class="py-20 bg-gradient-to-b from-gray-50 to-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <SectionHeader
+      title="Our Process"
+      subtitle="A systematic approach to implementing AI solutions that ensure success"
+    />
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-16">
+      {steps.map((step, index) => (
+        <ProcessStep {...step} isLast={index === steps.length - 1} />
+      ))}
+    </div>
+  </div>
+</section>

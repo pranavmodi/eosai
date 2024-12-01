@@ -1,0 +1,27 @@
+---
+import SectionHeader from '../shared/SectionHeader.astro';
+import TechCard from './cards/TechCard.astro';
+
+const technologies = [
+  { name: 'Machine Learning', icon: 'memory', description: 'Advanced algorithms for pattern recognition and prediction' },
+  { name: 'Deep Learning', icon: 'psychology', description: 'Neural networks for complex problem solving' },
+  { name: 'Natural Language Processing', icon: 'translate', description: 'Understanding and processing human language' },
+  { name: 'Computer Vision', icon: 'visibility', description: 'Visual data analysis and recognition' },
+  { name: 'Predictive Analytics', icon: 'analytics', description: 'Data-driven future insights' },
+  { name: 'Cloud Computing', icon: 'cloud', description: 'Scalable infrastructure solutions' }
+];
+---
+
+<section class="py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <SectionHeader
+      title="Technology Stack"
+      subtitle="Cutting-edge technologies we use to build powerful AI solutions"
+    />
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mt-16">
+      {technologies.map(tech => (
+        <TechCard {...tech} />
+      ))}
+    </div>
+  </div>
+</section>
