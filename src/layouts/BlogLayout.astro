@@ -1,12 +1,30 @@
 ---
-const { title, description, pubDate, author } = Astro.props;
+import Layout from './Layout.astro';
+const { frontmatter } = Astro.props;
+const { title, description, pubDate, author } = frontmatter;
+
+const formattedDate = new Date(pubDate).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+} as const);
 ---
 
-<article>
-  <header>
-    <h1>{title}</h1>
-    <p>{description}</p>
-    <p><small>By {author} on {new Date(pubDate).toLocaleDateString()}</small></p>
-  </header>
-  <slot />
-</article> 
+<Layout title={title} description={description}>
+  <main class="container mx-auto px-4 py-12 max-w-4xl">
+    <article class="prose lg:prose-xl mx-auto bg-white rounded-xl shadow-xl p-8">
+      <header class="mb-8 text-center">
+        <h1 class="text-4xl font-bold mb-4">{title}</h1>
+        <p class="text-xl text-gray-600 mb-4">{description}</p>
+        <div class="text-gray-500">
+          <span>By {author}</span>
+          <span class="mx-2">•</span>
+          <time datetime={pubDate}>{formattedDate}</time>
+        </div>
+      </header>
+      <div class="prose-headings:font-bold prose-h2:text-2xl prose-h3:text-xl prose-p:text-gray-700 prose-a:text-primary hover:prose-a:text-primary/80 prose-img:rounded-xl prose-pre:bg-gray-900 prose-pre:text-gray-100">
+        <slot />
+      </div>
+    </article>
+  </main>
+</Layout> 
