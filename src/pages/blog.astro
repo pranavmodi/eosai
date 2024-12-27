@@ -1,80 +1,41 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import type { AstroInstance } from 'astro';
+import SectionTitle from '../components/shared/SectionTitle.astro';
+import BlogCard from '../components/BlogCard.astro';
+import CTASection from '../components/shared/CTASection.astro';
+import { blogPosts } from '../data/blogPosts';
 
-interface Frontmatter {
-  title: string;
-  description: string;
-  image: string;
-  pubDate: string | Date;
-  author: string;
-  authorAvatar: string;
-  category: string;
-  readTime: string;
-}
-
-interface BlogPost {
-  url: string;
-  frontmatter: Frontmatter;
-}
-
-// Get all blog posts using import.meta.glob
-const blogEntries = await import.meta.glob<BlogPost>('./blog/*.astro', { eager: true });
-const posts = Object.values(blogEntries)
-  .filter((post): post is BlogPost => post.url !== '/blog') // Filter out the index page itself
-  .sort((a, b) => {
-    const dateA = new Date(a.frontmatter?.pubDate || 0);
-    const dateB = new Date(b.frontmatter?.pubDate || 0);
-    return dateB.valueOf() - dateA.valueOf();
-  });
+const posts = blogPosts.sort((a, b) => {
+  return new Date(b.date).getTime() - new Date(a.date).getTime();
+});
 ---
 
-<Layout title="Blog | Case Studies" description="Explore our latest case studies and insights">
-  <main class="container mx-auto px-4 py-16">
-    <h1 class="text-4xl font-bold text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-      Case Studies & Insights
-    </h1>
-    
-    <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-      {posts.map((post) => {
-        const { frontmatter } = post;
-        if (!frontmatter) return null;
-        
-        return (
-          <a href={post.url} 
-             class="group bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
-            {frontmatter.image && (
-              <div class="aspect-video w-full overflow-hidden">
-                <img 
-                  src={frontmatter.image} 
-                  alt={frontmatter.title}
-                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-            )}
-            <article class="p-6">
-              <div class="flex items-center gap-2 mb-4">
-                <time datetime={new Date(frontmatter.pubDate).toISOString()} 
-                      class="text-sm text-primary/80 font-medium bg-primary/5 px-3 py-1 rounded-full">
-                  {new Date(frontmatter.pubDate).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </time>
-                <span class="text-sm text-gray-500">·</span>
-                <span class="text-sm text-gray-500">{frontmatter.readTime}</span>
-              </div>
-              <h2 class="text-2xl font-bold group-hover:text-primary transition-colors">
-                {frontmatter.title}
-              </h2>
-              <p class="text-gray-600 mt-2 line-clamp-3">
-                {frontmatter.description}
-              </p>
-            </article>
-          </a>
-        );
-      })}
+<Layout 
+  title="Blog & Insights"
+  description="Latest insights, trends, and best practices in AI and machine learning"
+>
+  <div class="py-24 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <SectionTitle
+        title="Latest Insights"
+        subtitle="Explore our latest thoughts on AI, machine learning, and digital transformation"
+        gradient={true}
+      />
+      
+      <div class="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {posts.map((post) => (
+          <BlogCard {...post} />
+        ))}
+      </div>
     </div>
-  </main>
+  </div>
+
+  <CTASection
+    title="Stay Updated with AI Trends"
+    description="Subscribe to our newsletter for the latest insights and updates in AI technology"
+    primaryButtonText="Subscribe Now"
+    primaryButtonLink="/contact#newsletter"
+    secondaryButtonText="Contact Us"
+    secondaryButtonLink="/contact"
+  />
 </Layout>

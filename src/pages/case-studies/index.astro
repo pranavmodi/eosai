@@ -1,0 +1,33 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import SectionTitle from '../../components/shared/SectionTitle.astro';
+import CTASection from '../../components/shared/CTASection.astro';
+---
+
+<Layout 
+  title="Case Studies"
+  description="Explore real-world examples of how our AI solutions have transformed businesses"
+>
+  <div class="py-24 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <SectionTitle
+        title="Success Stories"
+        subtitle="Discover how we've helped organizations achieve their goals with AI"
+        gradient={true}
+      />
+      
+      <div class="mt-16">
+        <!-- Case studies grid will go here -->
+      </div>
+    </div>
+  </div>
+
+  <CTASection
+    title="Ready to Write Your Success Story?"
+    description="Join the ranks of businesses that have transformed their operations with our AI solutions"
+    primaryButtonText="Start Your Project"
+    primaryButtonLink="/contact"
+    secondaryButtonText="View Services"
+    secondaryButtonLink="/services"
+  />
+</Layout> 
