@@ -54,7 +54,7 @@ const services = [
 ];
 ---
 
-<section id="services" class="py-24 bg-gray-50">
+<section id="services" class="py-32 bg-gray-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <SectionTitle
       title="Our Services"
@@ -62,12 +62,17 @@ const services = [
       gradient={true}
     />
     
-    <div class="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
-      {services.map((service, index) => (
-        <div class="group" style={`animation: fadeInUp ${0.2 * (index + 1)}s ease-out both;`}>
-          <ServiceCard {...service} />
-        </div>
-      ))}
+    <div class="mt-20">
+      <div class="grid gap-8 md:grid-cols-2">
+        {services.map((service, index) => (
+          <div 
+            class="group transform hover:-translate-y-1 transition-all duration-300" 
+            style={`animation: fadeInUp ${0.2 * (index + 1)}s ease-out both;`}
+          >
+            <ServiceCard {...service} />
+          </div>
+        ))}
+      </div>
     </div>
   </div>
 </section>
