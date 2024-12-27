@@ -1,5 +1,5 @@
 ---
-import SectionHeader from '../shared/SectionHeader.astro';
+import SectionTitle from '../shared/SectionTitle.astro';
 import ProcessStep from './steps/ProcessStep.astro';
 
 const steps = [
@@ -30,16 +30,48 @@ const steps = [
 ];
 ---
 
-<section class="py-20 bg-gradient-to-b from-gray-50 to-white">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <SectionHeader
+<section class="py-32 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
+  <div class="absolute inset-0 bg-grid-pattern opacity-5"></div>
+  
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+    <SectionTitle
       title="Our Process"
       subtitle="A systematic approach to implementing AI solutions that ensure success"
+      gradient={true}
     />
-    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-16">
+    
+    <div class="mt-20 grid md:grid-cols-2 lg:grid-cols-4 gap-12">
       {steps.map((step, index) => (
-        <ProcessStep {...step} isLast={index === steps.length - 1} />
+        <div 
+          class="relative" 
+          style={`animation: fadeInRight ${0.3 * (index + 1)}s ease-out both;`}
+        >
+          <ProcessStep {...step} isLast={index === steps.length - 1} />
+          {index !== steps.length - 1 && (
+            <div class="hidden lg:block absolute top-1/2 right-0 w-full h-0.5 bg-gradient-to-r from-primary/20 to-secondary/20 transform translate-y-[-50%] translate-x-[50%]"></div>
+          )}
+        </div>
       ))}
     </div>
   </div>
 </section>
+
+<style>
+  .bg-grid-pattern {
+    background-image: 
+      linear-gradient(to right, rgb(243 244 246 / 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(243 244 246 / 0.1) 1px, transparent 1px);
+    background-size: 4rem 4rem;
+  }
+
+  @keyframes fadeInRight {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+</style>

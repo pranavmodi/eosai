@@ -1,6 +1,6 @@
 ---
 import ServiceCard from './cards/ServiceCard.astro';
-import SectionHeader from '../shared/SectionHeader.astro';
+import SectionTitle from '../shared/SectionTitle.astro';
 
 const services = [
   {
@@ -54,17 +54,33 @@ const services = [
 ];
 ---
 
-<section class="py-20">
+<section id="services" class="py-24 bg-gray-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <SectionHeader
+    <SectionTitle
       title="Our Services"
-      subtitle="Comprehensive AI solutions tailored to drive your business forward"
-      alignment="left"
+      subtitle="Comprehensive AI solutions tailored to your business needs"
+      gradient={true}
     />
-    <div class="grid md:grid-cols-2 gap-8 mt-12">
-      {services.map(service => (
-        <ServiceCard {...service} />
+    
+    <div class="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
+      {services.map((service, index) => (
+        <div class="group" style={`animation: fadeInUp ${0.2 * (index + 1)}s ease-out both;`}>
+          <ServiceCard {...service} />
+        </div>
       ))}
     </div>
   </div>
 </section>
+
+<style>
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

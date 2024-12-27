@@ -30,7 +30,7 @@ export const blogPosts: BlogPost[] = [
     image: "/blog/precise-mri.jpg",
     date: "Mar 10, 2024",
     author: {
-      name: "Dr. Sarah Chen",
+      name: "Dr. Sarah Chang",
       avatar: "/team/sarah-chen.jpg"
     },
     category: "Case Study",

@@ -1,14 +1,70 @@
 ---
 ---
 
-<div class="bg-mesh py-32 relative overflow-hidden">
-  <div class="absolute inset-0 bg-gradient-to-b from-transparent to-white/10"></div>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-    <div class="text-center">
-      <h1 class="text-5xl font-bold text-white mb-6">AI Solutions & Services</h1>
-      <p class="text-xl text-white/90 max-w-2xl mx-auto">
-        From strategy to implementation, we provide end-to-end AI solutions to transform your business and drive innovation.
-      </p>
+<div class="relative overflow-hidden min-h-[80vh] flex items-center justify-center">
+  <video 
+    autoplay 
+    loop 
+    muted 
+    playsinline
+    class="absolute inset-0 w-full h-full object-cover"
+  >
+    <source src="/services.mp4" type="video/mp4" />
+  </video>
+  <div class="absolute inset-0 bg-black/60"></div>
+  <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/40"></div>
+  
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-20">
+    <div class="text-center space-y-8">
+      <div class="animate-fade-in">
+        <h1 class="text-6xl font-bold text-white mb-6 leading-tight">
+          AI Solutions & Services
+        </h1>
+        <p class="text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+          From strategy to implementation, we provide end-to-end AI solutions to transform your business and drive innovation.
+        </p>
+      </div>
+      
+      <div class="flex justify-center space-x-6 pt-8 animate-fade-in-up">
+        <a href="#contact" class="px-8 py-4 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium transition-all">
+          Get Started
+        </a>
+        <a href="#services" class="px-8 py-4 bg-white/10 hover:bg-white/20 text-white rounded-lg font-medium backdrop-blur-sm transition-all">
+          Learn More
+        </a>
+      </div>
+
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white/80" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6l-6-6l1.41-1.41z"/>
+        </svg>
+      </div>
     </div>
   </div>
 </div>
+
+<style>
+  .animate-fade-in {
+    animation: fadeIn 1s ease-out;
+  }
+  
+  .animate-fade-in-up {
+    animation: fadeInUp 1s ease-out 0.5s both;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
