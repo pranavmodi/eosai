@@ -1,0 +1,146 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import HeroSection from '../../components/case-studies/HeroSection.astro';
+import MetricsGrid from '../../components/case-studies/MetricsGrid.astro';
+
+const meta = {
+  title: "Reimagining Patient Care: How Precise MRI Revolutionized Customer Service",
+  description: "Discover how we transformed Precise MRI's patient experience with an innovative AI chatbot, streamlining operations and enhancing customer service through intelligent automation.",
+  image: "/blog/mri-patient-care.jpg",
+  date: "2023-12-23",
+  author: {
+    name: "Alex Thompson",
+    avatar: "/team/alex-thompson.jpg"
+  },
+  category: "Healthcare Technology",
+  readTime: "8 min"
+};
+
+const challengeMetrics = [
+  {
+    value: "24/7",
+    label: "Support Needed",
+    description: "Round-the-clock patient assistance required"
+  },
+  {
+    value: "100+",
+    label: "Daily Inquiries",
+    description: "High volume of patient questions and requests"
+  },
+  {
+    value: "60%",
+    label: "Staff Time on Queries",
+    description: "Time spent on routine patient communications"
+  }
+];
+
+const resultMetrics = [
+  {
+    value: "85%",
+    label: "Reduction in Response Time",
+    description: "Immediate responses to patient inquiries, any time of day"
+  },
+  {
+    value: "40hrs",
+    label: "Weekly Time Saved",
+    description: "Staff freed up to focus on higher-value tasks"
+  }
+];
+---
+
+<Layout title={meta.title} description={meta.description}>
+  <article class="min-h-screen">
+    <!-- Hero Section with Split Layout -->
+    <HeroSection {...meta} style="split" />
+
+    <!-- Content Section -->
+    <div class="container mx-auto px-4 py-16">
+      <div class="max-w-3xl mx-auto">
+        <!-- Challenge Section -->
+        <section class="mb-16">
+          <h2 class="text-3xl font-bold mb-6">The Challenge</h2>
+          <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <p class="text-gray-700 leading-relaxed mb-6">
+              Handling a deluge of patient inquiries was becoming increasingly challenging for Precise MRI. 
+              Questions about scheduling, cancellations, and preparation for appointments were flooding in daily, 
+              consuming valuable staff time and resources.
+            </p>
+            <MetricsGrid 
+              metrics={challengeMetrics}
+              style="gradient"
+            />
+          </div>
+        </section>
+
+        <!-- Solution Section -->
+        <section class="mb-16">
+          <h2 class="text-3xl font-bold mb-6">Our Transformative Solution</h2>
+          <div class="space-y-8">
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+              <h3 class="text-2xl font-bold text-primary/90 mb-4">Knowledge Base Mastery</h3>
+              <p class="text-gray-700 mb-6">
+                Leveraging cutting-edge Retrieval Augmented Generation, our chatbot accesses an extensive 
+                knowledge base to provide precise answers.
+              </p>
+              <ul class="grid gap-4">
+                <li class="flex items-start gap-3">
+                  <div class="mt-1 p-1 bg-primary/10 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <strong class="text-gray-900">Appointment Guidance</strong>
+                    <p class="text-gray-600">Step-by-step assistance for booking, rescheduling, or canceling appointments</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Testimonial -->
+            <blockquote class="bg-gradient-to-r from-primary/5 to-transparent rounded-2xl p-8">
+              <p class="text-lg text-gray-700 italic mb-4">
+                "Partnering with your agency was a game-changer for us. The process was straightforward 
+                and even fun at times. The chatbot has not only met our needs but exceeded our expectations, 
+                reshaping how we interact with our patients."
+              </p>
+              <footer class="flex items-center gap-4">
+                <img 
+                  src="/testimonials/danny-rackow.jpg" 
+                  alt="Danny Rackow"
+                  class="w-12 h-12 rounded-full"
+                />
+                <div>
+                  <div class="font-medium text-gray-900">Danny Rackow</div>
+                  <div class="text-sm text-gray-600">Precise MRI</div>
+                </div>
+              </footer>
+            </blockquote>
+          </div>
+        </section>
+
+        <!-- Results Section -->
+        <MetricsGrid 
+          title="The Impact"
+          metrics={resultMetrics}
+          columns={2}
+          style="cards"
+        />
+
+        <!-- CTA Section -->
+        <section class="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl p-8 text-center">
+          <h2 class="text-2xl font-bold mb-4">Ready to Transform Your Business?</h2>
+          <p class="text-gray-600 mb-8">Let's discuss how we can create an innovative solution tailored to your needs.</p>
+          <div class="flex justify-center gap-4">
+            <a href="/contact" class="px-8 py-3 bg-primary text-white rounded-full font-medium hover:bg-primary/90 transition-colors">
+              Get Started
+            </a>
+            <a href="/case-studies" class="px-8 py-3 bg-white text-primary rounded-full font-medium hover:bg-gray-50 transition-colors">
+              View More Cases
+            </a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </article>
+</Layout> 

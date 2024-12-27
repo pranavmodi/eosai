@@ -1,0 +1,99 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  image: string;
+  category: string;
+  readTime: string;
+  author: {
+    name: string;
+    avatar: string;
+  };
+  date: string;
+  style?: 'centered' | 'split' | 'overlay' = 'overlay';
+}
+
+const { title, description, image, category, readTime, author, date, style } = Astro.props;
+const formattedDate = new Date(date).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+---
+
+{style === 'overlay' && (
+  <div class="relative h-[60vh] min-h-[400px] w-full">
+    <div class="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent z-10"></div>
+    <img src={image} alt={title} class="w-full h-full object-cover" />
+    <div class="absolute inset-0 z-20 container mx-auto px-4 flex flex-col justify-center text-white">
+      <div class="max-w-3xl">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="px-3 py-1 bg-primary/90 rounded-full text-sm font-medium">{category}</span>
+          <span class="text-sm">·</span>
+          <span class="text-sm">{readTime}</span>
+        </div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">{title}</h1>
+        <p class="text-xl text-white/90 mb-8 max-w-2xl">{description}</p>
+        <div class="flex items-center gap-4">
+          <img src={author.avatar} alt={author.name} class="w-12 h-12 rounded-full border-2 border-white/20" />
+          <div>
+            <div class="font-medium">{author.name}</div>
+            <div class="text-sm text-white/80">{formattedDate}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+{style === 'split' && (
+  <div class="grid md:grid-cols-2 min-h-[60vh]">
+    <div class="flex flex-col justify-center p-8 md:p-16 bg-gradient-to-br from-primary/5 to-secondary/5">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="px-3 py-1 bg-primary/90 text-white rounded-full text-sm font-medium">{category}</span>
+        <span class="text-sm text-gray-600">·</span>
+        <span class="text-sm text-gray-600">{readTime}</span>
+      </div>
+      <h1 class="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+        {title}
+      </h1>
+      <p class="text-xl text-gray-600 mb-8">{description}</p>
+      <div class="flex items-center gap-4">
+        <img src={author.avatar} alt={author.name} class="w-12 h-12 rounded-full border-2 border-primary/20" />
+        <div>
+          <div class="font-medium text-gray-900">{author.name}</div>
+          <div class="text-sm text-gray-600">{formattedDate}</div>
+        </div>
+      </div>
+    </div>
+    <div class="relative">
+      <img src={image} alt={title} class="absolute inset-0 w-full h-full object-cover" />
+    </div>
+  </div>
+)}
+
+{style === 'centered' && (
+  <div class="relative py-20 bg-gradient-to-b from-gray-50">
+    <div class="container mx-auto px-4 text-center">
+      <div class="flex items-center justify-center gap-3 mb-6">
+        <span class="px-3 py-1 bg-primary/90 text-white rounded-full text-sm font-medium">{category}</span>
+        <span class="text-sm text-gray-600">·</span>
+        <span class="text-sm text-gray-600">{readTime}</span>
+      </div>
+      <h1 class="text-4xl md:text-6xl font-bold mb-6 max-w-4xl mx-auto">
+        {title}
+      </h1>
+      <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">{description}</p>
+      <div class="flex items-center justify-center gap-4 mb-12">
+        <img src={author.avatar} alt={author.name} class="w-12 h-12 rounded-full border-2 border-primary/20" />
+        <div>
+          <div class="font-medium text-gray-900">{author.name}</div>
+          <div class="text-sm text-gray-600">{formattedDate}</div>
+        </div>
+      </div>
+      <div class="relative h-[40vh] min-h-[400px] rounded-2xl overflow-hidden shadow-2xl">
+        <img src={image} alt={title} class="w-full h-full object-cover" />
+      </div>
+    </div>
+  </div>
+)} 

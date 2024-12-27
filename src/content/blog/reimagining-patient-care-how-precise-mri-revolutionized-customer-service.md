@@ -1,3 +1,15 @@
+---
+title: "Reimagining Patient Care: How Precise MRI Revolutionized Customer Service"
+excerpt: "Discover how we transformed Precise MRI's patient experience with an innovative AI chatbot, streamlining operations and enhancing customer service through intelligent automation."
+image: "/blog/mri-patient-care.jpg"
+date: "2023-12-23"
+author:
+  name: "Alex Thompson"
+  avatar: "/team/alex-thompson.jpg"
+category: "Healthcare Technology"
+readTime: "8 min"
+---
+
 # Reimagining Patient Care: How Precise MRI Revolutionized Customer Service with Our Innovative Chatbot
 
 In the ever-evolving landscape of healthcare, providing swift and accurate customer service is not just a luxury—it's a necessity. Patients seeking medical imaging services demand timely information and personalized support. Recognizing this need, Precise MRI set out to transform their patient experience while optimizing operational efficiency.

@@ -4,12 +4,16 @@ const blogCollection = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
-    description: z.string(),
-    pubDate: z.date(),
-    author: z.string(),
+    excerpt: z.string(),
     image: z.string().optional(),
-    tags: z.array(z.string()).optional(),
-    featured: z.boolean().optional().default(false),
+    date: z.string().transform((str) => new Date(str)),
+    author: z.object({
+      name: z.string(),
+      avatar: z.string()
+    }),
+    category: z.string(),
+    readTime: z.string(),
+    draft: z.boolean().optional().default(false)
   })
 });
 
