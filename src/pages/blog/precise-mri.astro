@@ -1,0 +1,106 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+
+export const frontmatter = {
+  title: "How Precise MRI Transformed Patient Support with AI-Powered Chatbot",
+  description: "Learn how Precise MRI leveraged Botpress to automate customer support, saving 150+ hours monthly while improving patient satisfaction.",
+  image: "/blog/precise-mri.jpg",
+  pubDate: new Date('2023-12-26'),
+  author: "Dr. Michael Thompson",
+  authorAvatar: "/team/michael-thompson.jpg",
+  category: "Case Study",
+  readTime: "5 min"
+};
+---
+
+<BlogLayout frontmatter={frontmatter}>
+  <div class="max-w-3xl mx-auto px-4 py-12 prose prose-lg">
+    <h1 class="text-4xl font-bold mb-8">How Precise MRI Transformed Patient Support with AI-Powered Chatbot</h1>
+
+    <h2 class="text-2xl font-semibold mt-8 mb-4">Introduction</h2>
+    <p class="mb-6">When Precise MRI, a medical imaging provider with around 200 employees, noticed their customer support was getting overwhelmed by repetitive patient inquiries, they reached out to us for a tailored, cost-effective solution. CEO Danny Rackow needed a way to reduce operational costs while maintaining a high standard of patient care and satisfaction. Our answer was a custom, Botpress-powered chatbot, built to handle routine questions and seamlessly hand off more complex issues to human agents.</p>
+
+    <h2 class="text-2xl font-semibold mt-8 mb-4">Objectives & Benefits for the Client</h2>
+    <p class="mb-4">From the start, our mission was to help Precise MRI conserve resources, boost patient satisfaction, and simplify staff workflows. By automating repetitive queries, we aimed to:</p>
+    <ul class="list-disc pl-6 mb-6 space-y-2">
+      <li>Save Significant Man-Hours</li>
+      <li>Cut Operational Costs</li>
+      <li>Maintain (and even Improve) Patient Experience</li>
+    </ul>
+
+    <h2 class="text-2xl font-semibold mt-8 mb-4">Chatbot Features & Technical Highlights</h2>
+    
+    <div class="my-8">
+      <img 
+        src="/blog/pre1.jpg" 
+        alt="Precise MRI Chatbot Interface"
+        class="rounded-lg shadow-lg w-full"
+      />
+    </div>
+    
+    <h3 class="text-xl font-semibold mt-6 mb-3">Retrieval-Augmented Knowledge Base</h3>
+    <ul class="list-disc pl-6 mb-6 space-y-2">
+      <li>Patients receive instant answers to common MRI questions (booking, canceling, preparation, etc.)</li>
+      <li>Rapidly accessible, accurate info—no more waiting on hold</li>
+    </ul>
+
+    <h3 class="text-xl font-semibold mt-6 mb-3">Authentication Flow with Twilio</h3>
+    <ul class="list-disc pl-6 mb-6 space-y-2">
+      <li>When patient-specific info is needed, the bot triggers a secure SMS verification flow</li>
+      <li>After successful verification, the bot retrieves appointment history and provides personalized responses</li>
+    </ul>
+
+    <h3 class="text-xl font-semibold mt-6 mb-3">Effortless Human Hand-Off to Front App</h3>
+    <ul class="list-disc pl-6 mb-6 space-y-2">
+      <li>If a user requests human support or the issue becomes too complex, the conversation transfers to the Front App</li>
+      <li>Webhooks and the Front App API ensure a seamless transition without losing context</li>
+    </ul>
+
+    <div class="my-8">
+      <img 
+        src="/blog/pre2.jpg" 
+        alt="Precise MRI Chatbot Analytics Dashboard"
+        class="rounded-lg shadow-lg w-full"
+      />
+    </div>
+
+    <h2 class="text-2xl font-semibold mt-8 mb-4">Working with Our Agency</h2>
+    <p class="mb-6">Working alongside Danny Rackow and his team was a true pleasure. He came prepared with a clear vision but also trusted us to innovate and iterate on the project. Our transparent communication channels and quick feedback loops allowed us to fine-tune the chatbot to meet—and exceed—Precise MRI's standards. By staying agile, we were able to efficiently incorporate new features as the needs evolved.</p>
+
+    <h2 class="text-2xl font-semibold mt-8 mb-4">Outcome & Results</h2>
+    <p class="mb-8">After launching the Botpress solution, Precise MRI immediately reaped tangible benefits:</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow">
+        <div class="text-4xl font-bold text-primary mb-3">40%</div>
+        <h3 class="text-xl font-semibold mb-3">Inquiries Handled by Chatbot</h3>
+        <p class="text-gray-600">This significantly lightened the load on human agents, letting them focus on more intricate patient concerns.</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow">
+        <div class="text-4xl font-bold text-primary mb-3">150+</div>
+        <h3 class="text-xl font-semibold mb-3">Man-Hours Saved Monthly</h3>
+        <p class="text-gray-600">By automating routine questions, the staff gained valuable time to tackle complex or sensitive tasks that demand a personal touch.</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow">
+        <div class="text-4xl font-bold text-primary mb-3">$20K</div>
+        <h3 class="text-xl font-semibold mb-3">Annual Cost Savings</h3>
+        <p class="text-gray-600">Reduced staffing overhead and more efficient resource allocation resulted in solid financial returns.</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow">
+        <div class="text-4xl font-bold text-primary mb-3">25%</div>
+        <h3 class="text-xl font-semibold mb-3">Increase in Satisfaction</h3>
+        <p class="text-gray-600">Faster responses at any hour, coupled with accurate and personalized information, left patients feeling more confident and supported.</p>
+      </div>
+    </div>
+
+    <p class="mb-6">These data points underscore the real-world impact of strategic automation: cutting unnecessary costs, improving team efficiency, and boosting the overall patient experience.</p>
+
+    <h2 class="text-2xl font-semibold mt-8 mb-4">Conclusion & Next Steps</h2>
+    <p class="mb-6">For Precise MRI, this chatbot solution has reshaped the way they address customer queries—delivering timely support, safeguarding patient data, and freeing up staff for critical tasks. With potential future enhancements like integrated appointment scheduling and advanced AI-based interactions, the opportunities are boundless.</p>
+    
+    <p class="mb-6">If you're ready to see how a custom Botpress solution can streamline your organization's customer service while saving time and money, we're here to help. Reach out to us for a consultation, and let's tailor a solution that delivers tangible results for your business.</p>
+  </div>
+</BlogLayout> 

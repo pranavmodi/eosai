@@ -1,13 +1,32 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { getCollection } from 'astro:content';
+import type { AstroInstance } from 'astro';
 
-const posts = await getCollection('blog', ({ data }) => {
-  return import.meta.env.PROD ? data.draft !== true : true;
-});
+interface Frontmatter {
+  title: string;
+  description: string;
+  image: string;
+  pubDate: string | Date;
+  author: string;
+  authorAvatar: string;
+  category: string;
+  readTime: string;
+}
 
-// Sort posts by date
-const sortedPosts = posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+interface BlogPost {
+  url: string;
+  frontmatter: Frontmatter;
+}
+
+// Get all blog posts using import.meta.glob
+const blogEntries = await import.meta.glob<BlogPost>('./blog/*.astro', { eager: true });
+const posts = Object.values(blogEntries)
+  .filter((post): post is BlogPost => post.url !== '/blog') // Filter out the index page itself
+  .sort((a, b) => {
+    const dateA = new Date(a.frontmatter?.pubDate || 0);
+    const dateB = new Date(b.frontmatter?.pubDate || 0);
+    return dateB.valueOf() - dateA.valueOf();
+  });
 ---
 
 <Layout title="Blog | Case Studies" description="Explore our latest case studies and insights">
@@ -17,48 +36,45 @@ const sortedPosts = posts.sort((a, b) => b.data.date.valueOf() - a.data.date.val
     </h1>
     
     <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-      {sortedPosts.map((post) => (
-        <a href={`/blog/${post.slug}`} 
-           class="group bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
-          {post.data.image && (
-            <div class="aspect-video w-full overflow-hidden">
-              <img 
-                src={post.data.image} 
-                alt={post.data.title}
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            </div>
-          )}
-          <article class="p-6">
-            <div class="flex items-center gap-2 mb-4">
-              <time datetime={post.data.date.toISOString()} 
-                    class="text-sm text-primary/80 font-medium bg-primary/5 px-3 py-1 rounded-full">
-                {post.data.date.toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-              </time>
-              <span class="text-sm text-gray-500">·</span>
-              <span class="text-sm text-gray-500">{post.data.readTime}</span>
-            </div>
-            <h2 class="text-2xl font-bold group-hover:text-primary transition-colors">
-              {post.data.title}
-            </h2>
-            <p class="text-gray-600 mt-2 line-clamp-3">
-              {post.data.excerpt}
-            </p>
-            <div class="mt-4 flex items-center gap-3">
-              <img 
-                src={post.data.author.avatar} 
-                alt={post.data.author.name}
-                class="w-8 h-8 rounded-full"
-              />
-              <span class="text-sm text-gray-600">By {post.data.author.name}</span>
-            </div>
-          </article>
-        </a>
-      ))}
+      {posts.map((post) => {
+        const { frontmatter } = post;
+        if (!frontmatter) return null;
+        
+        return (
+          <a href={post.url} 
+             class="group bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+            {frontmatter.image && (
+              <div class="aspect-video w-full overflow-hidden">
+                <img 
+                  src={frontmatter.image} 
+                  alt={frontmatter.title}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+            )}
+            <article class="p-6">
+              <div class="flex items-center gap-2 mb-4">
+                <time datetime={new Date(frontmatter.pubDate).toISOString()} 
+                      class="text-sm text-primary/80 font-medium bg-primary/5 px-3 py-1 rounded-full">
+                  {new Date(frontmatter.pubDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </time>
+                <span class="text-sm text-gray-500">·</span>
+                <span class="text-sm text-gray-500">{frontmatter.readTime}</span>
+              </div>
+              <h2 class="text-2xl font-bold group-hover:text-primary transition-colors">
+                {frontmatter.title}
+              </h2>
+              <p class="text-gray-600 mt-2 line-clamp-3">
+                {frontmatter.description}
+              </p>
+            </article>
+          </a>
+        );
+      })}
     </div>
   </main>
 </Layout>

@@ -10,10 +10,20 @@ interface Props {
     avatar: string;
   };
   date: string;
-  style?: 'centered' | 'split' | 'overlay' = 'overlay';
+  style?: 'centered' | 'split' | 'overlay';
 }
 
-const { title, description, image, category, readTime, author, date, style } = Astro.props;
+const { 
+  title, 
+  description, 
+  image, 
+  category, 
+  readTime, 
+  author, 
+  date, 
+  style = 'overlay' 
+} = Astro.props;
+
 const formattedDate = new Date(date).toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'long',
