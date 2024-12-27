@@ -4,7 +4,7 @@ import BlogLayout from '../../layouts/BlogLayout.astro';
 export const frontmatter = {
   title: "The Future of AI in Enterprise: Transforming Business Operations",
   description: "Explore how artificial intelligence is reshaping enterprise operations, from intelligent automation to strategic decision-making, and learn how businesses can prepare for an AI-driven future.",
-  image: "/blog/ai-enterprise.jpg",
+  image: "/blog/business-transform.jpg",
   pubDate: new Date('2023-12-24'),
   author: "Dr. Sarah Chen",
   authorAvatar: "/team/sarah-chen.jpg",
@@ -14,29 +14,52 @@ export const frontmatter = {
 ---
 
 <BlogLayout frontmatter={frontmatter}>
-  <h1>The Future of AI in Enterprise: Transforming Business Operations</h1>
+  <article class="max-w-3xl mx-auto px-4">
+    <h1 class="text-4xl font-bold text-gray-900 mb-8 leading-tight">
+      The Future of AI in Enterprise: Transforming Business Operations
+    </h1>
 
-  <h2>The Current Enterprise Landscape</h2>
-  <p>Today's enterprises face unprecedented challenges in maintaining competitiveness while managing vast amounts of data, complex operations, and evolving customer expectations. Traditional approaches to business processes are becoming increasingly insufficient in meeting these demands, creating a critical need for intelligent automation and decision-making systems.</p>
+    <!-- <div class="mb-12 rounded-xl overflow-hidden shadow-lg">
+      <img 
+        src="/blog/business-transform.jpg" 
+        alt="AI transforming business operations" 
+        class="w-full h-auto object-cover"
+        loading="eager"
+      />
+    </div> -->
 
-  <h2>Key Areas of AI Impact</h2>
-  
-  <h3>Intelligent Process Automation</h3>
-  <p>AI is revolutionizing how enterprises handle routine operations:</p>
-  <ul>
-    <li><strong>Workflow Optimization</strong>: AI-powered systems analyze and streamline business processes</li>
-    <li><strong>Document Processing</strong>: Advanced OCR and NLP capabilities transform unstructured data into actionable insights</li>
-    <li><strong>Resource Allocation</strong>: Smart algorithms optimize resource distribution across departments</li>
-  </ul>
+    <section class="prose prose-lg max-w-none">
+      <h2 class="text-2xl font-semibold text-gray-800 mt-12 mb-6">The Current Enterprise Landscape</h2>
+      <p class="text-gray-600 leading-relaxed mb-8">
+        Today's enterprises face unprecedented challenges in maintaining competitiveness while managing vast amounts of data, complex operations, and evolving customer expectations. Traditional approaches to business processes are becoming increasingly insufficient in meeting these demands, creating a critical need for intelligent automation and decision-making systems.
+      </p>
 
-  <h3>Enhanced Decision Making</h3>
-  <p>Modern AI tools are empowering leaders with:</p>
-  <ul>
-    <li><strong>Predictive Analytics</strong>: Forecasting market trends and business outcomes</li>
-    <li><strong>Risk Assessment</strong>: Real-time monitoring and risk mitigation strategies</li>
-    <li><strong>Strategic Planning</strong>: Data-driven insights for long-term business planning</li>
-  </ul>
+      <h2 class="text-2xl font-semibold text-gray-800 mt-12 mb-6">Key Areas of AI Impact</h2>
+      
+      <div class="bg-gray-50 rounded-lg p-6 mb-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Intelligent Process Automation</h3>
+        <p class="text-gray-600 mb-4">AI is revolutionizing how enterprises handle routine operations:</p>
+        <ul class="list-disc pl-6 space-y-2 text-gray-600">
+          <li><strong class="text-gray-800">Workflow Optimization</strong>: AI-powered systems analyze and streamline business processes</li>
+          <li><strong class="text-gray-800">Document Processing</strong>: Advanced OCR and NLP capabilities transform unstructured data into actionable insights</li>
+          <li><strong class="text-gray-800">Resource Allocation</strong>: Smart algorithms optimize resource distribution across departments</li>
+        </ul>
+      </div>
 
-  <h2>Conclusion</h2>
-  <p>The future of enterprise AI is not just about technology—it's about transformation. Organizations that embrace AI strategically while addressing implementation challenges will be better positioned to thrive in the evolving business landscape. The key lies in viewing AI not as a mere tool, but as a fundamental shift in how enterprises operate and deliver value.</p>
+      <div class="bg-gray-50 rounded-lg p-6 mb-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Enhanced Decision Making</h3>
+        <p class="text-gray-600 mb-4">Modern AI tools are empowering leaders with:</p>
+        <ul class="list-disc pl-6 space-y-2 text-gray-600">
+          <li><strong class="text-gray-800">Predictive Analytics</strong>: Forecasting market trends and business outcomes</li>
+          <li><strong class="text-gray-800">Risk Assessment</strong>: Real-time monitoring and risk mitigation strategies</li>
+          <li><strong class="text-gray-800">Strategic Planning</strong>: Data-driven insights for long-term business planning</li>
+        </ul>
+      </div>
+
+      <h2 class="text-2xl font-semibold text-gray-800 mt-12 mb-6">Conclusion</h2>
+      <p class="text-gray-600 leading-relaxed">
+        The future of enterprise AI is not just about technology—it's about transformation. Organizations that embrace AI strategically while addressing implementation challenges will be better positioned to thrive in the evolving business landscape. The key lies in viewing AI not as a mere tool, but as a fundamental shift in how enterprises operate and deliver value.
+      </p>
+    </section>
+  </article>
 </BlogLayout> 
