@@ -1,34 +1,49 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import BlogHeader from '../components/BlogHeader.astro';
-import BlogCard from '../components/BlogCard.astro';
-import CategoryFilter from '../components/CategoryFilter.astro';
-import { blogPosts, categories } from '../data/blogPosts';
-import '../styles/gradients.css';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog', ({ data }) => {
+  return import.meta.env.PROD ? data.draft !== true : true;
+});
+
+// Sort posts by date
+const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
-<Layout 
-  title="Blog"
-  description="Latest insights and trends in AI consulting, machine learning, and digital transformation"
->
-  <BlogHeader
-    title="AI Insights & Updates"
-    description="Stay informed about the latest developments in AI, machine learning, and digital transformation with our expert insights and analysis."
-  />
-
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <CategoryFilter categories={categories} />
+<Layout title="Blog | Case Studies" description="Explore our latest case studies and insights">
+  <main class="container mx-auto px-4 py-16">
+    <h1 class="text-4xl font-bold text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+      Case Studies & Insights
+    </h1>
     
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-      {blogPosts.map(post => (
-        <BlogCard {...post} />
-      ))}
+    <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      {sortedPosts.map(async (post) => {
+        const { remarkPluginFrontmatter } = await post.render();
+        return (
+          <a href={`/blog/${post.slug}`} 
+             class="group bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+            <article class="p-6">
+              <time datetime={post.data.pubDate.toISOString()} 
+                    class="text-sm text-primary/80 font-medium bg-primary/5 px-3 py-1 rounded-full">
+                {post.data.pubDate.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </time>
+              <h2 class="text-2xl font-bold mt-4 group-hover:text-primary transition-colors">
+                {post.data.title}
+              </h2>
+              <p class="text-gray-600 mt-2 line-clamp-3">
+                {post.data.description}
+              </p>
+              <div class="mt-4 flex items-center text-sm text-gray-500">
+                <span>By {post.data.author}</span>
+              </div>
+            </article>
+          </a>
+        )
+      })}
     </div>
-
-    <div class="flex justify-center pb-16">
-      <button class="px-8 py-3.5 rounded-full font-medium bg-primary text-white hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/35">
-        Load More Articles
-      </button>
-    </div>
-  </div>
+  </main>
 </Layout>
