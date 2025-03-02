@@ -80,4 +80,42 @@ const testimonials = [
     secondaryButtonText="Learn More"
     secondaryButtonLink="/services"
   />
+
+  <!-- Chat Widget -->
+  <script>
+    declare global {
+      interface Window {
+        PRECISEMRI_CHAT_CONFIG: any;
+      }
+    }
+
+    // Debug logger
+    function log(message) {
+      console.log(`[Chat Widget] ${message}`);
+    }
+
+    // Error handler
+    window.onerror = function(msg, url, line) {
+      log(`Error: ${msg}\nURL: ${url}\nLine: ${line}`);
+      return false;
+    };
+
+    // Configuration
+    window.PRECISEMRI_CHAT_CONFIG = {
+      apiUrl: 'http://54.71.183.198:50000/api/v1/chat/',
+      theme: {
+        primaryColor: '#0066cc',
+        buttonPosition: 'bottom-right'
+      },
+      debug: true
+    };
+
+    // Load the widget
+    log('Loading chat widget...');
+    const script = document.createElement('script');
+    script.src = 'http://54.71.183.198:50000/widget/chat.js';
+    script.onload = () => log('Chat widget script loaded successfully');
+    script.onerror = (error) => log('Error loading chat widget: ' + error);
+    document.body.appendChild(script);
+  </script>
 </Layout>
