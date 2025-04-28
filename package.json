@@ -15,8 +15,10 @@
     "@astrojs/netlify": "^6.3.1",
     "@astrojs/tailwind": "^5.1.0",
     "@fontsource/inter": "^5.0.17",
+    "@types/nodemailer": "^6.4.17",
     "astro": "^5.1.1",
     "astro-icon": "^1.1.5",
+    "nodemailer": "^6.10.1",
     "tailwindcss": "^3.4.1"
   }
 }
