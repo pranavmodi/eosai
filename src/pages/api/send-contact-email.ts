@@ -33,10 +33,10 @@ export const POST: APIRoute = async ({ request, redirect }) => {
   // Enhanced check for missing SMTP config
   if (missingVars.length > 0) {
     const errorMsg = `SMTP configuration error: Missing environment variable(s): ${missingVars.join(', ')}`;
-    console.error(errorMsg);
-    // Return a user-friendly, generic error to the browser
+    console.error(errorMsg); // Still log it for backend record
+    // Return the DETAILED error message to the browser (UNSAFE FOR PRODUCTION)
     return new Response(
-        "There was a problem with the server configuration. Please contact support if the issue persists.", 
+        `Server Configuration Error (for debugging): ${errorMsg}. Please fix the environment variables. DO NOT leave this enabled in production.`, 
         { status: 500 }
     );
   }
