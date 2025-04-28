@@ -12,14 +12,14 @@ import nodemailer from 'nodemailer';
 // --- Environment Variable Checks ---
 const missingVars: string[] = [];
 if (!import.meta.env.SMTP_HOST) missingVars.push('SMTP_HOST');
-if (!import.meta.env.SMTP_PORT) missingVars.push('SMTP_PORT'); // Also check port
+if (!import.meta.env.SMTP_PORT) missingVars.push('SMTP_PORT'); 
 if (!import.meta.env.SMTP_USER) missingVars.push('SMTP_USER');
 if (!import.meta.env.SMTP_PASS) missingVars.push('SMTP_PASS');
 
 const smtpConfig = {
   host: import.meta.env.SMTP_HOST,
   port: parseInt(import.meta.env.SMTP_PORT || '587', 10),
-  secure: parseInt(import.meta.env.SMTP_PORT || '587', 10) === 465, // true for 465, false for other ports
+  secure: parseInt(import.meta.env.SMTP_PORT || '587', 10) === 465, 
   auth: {
     user: import.meta.env.SMTP_USER,
     pass: import.meta.env.SMTP_PASS,
@@ -28,19 +28,21 @@ const smtpConfig = {
 
 const recipientEmail = import.meta.env.RECIPIENT_EMAIL || 'pranav@possibleminds.in';
 
+// --- API Route Handler ---
 export const POST: APIRoute = async ({ request, redirect }) => {
   
   // Enhanced check for missing SMTP config
   if (missingVars.length > 0) {
     const errorMsg = `SMTP configuration error: Missing environment variable(s): ${missingVars.join(', ')}`;
-    console.error(errorMsg); // Still log it for backend record
-    // Return the DETAILED error message to the browser (UNSAFE FOR PRODUCTION)
+    console.error(errorMsg); // Log detailed error
+    // Return a user-friendly, generic error to the browser
     return new Response(
-        `Server Configuration Error (for debugging): ${errorMsg}. Please fix the environment variables. DO NOT leave this enabled in production.`, 
+        "There was a problem with the server configuration. Please contact support if the issue persists.", 
         { status: 500 }
     );
   }
 
+  // --- Proceed with form processing and sending email ---
   const formData = await request.formData();
   const firstName = formData.get('firstName')?.toString() || '';
   const lastName = formData.get('lastName')?.toString() || '';
@@ -51,10 +53,10 @@ export const POST: APIRoute = async ({ request, redirect }) => {
   const transporter = nodemailer.createTransport(smtpConfig);
 
   const mailOptions = {
-    from: `"Contact Form" <${smtpConfig.auth.user}>`, // Sender address (must be your SMTP user)
-    to: recipientEmail, // List of receivers
-    replyTo: email, // Set Reply-To to the submitter's email
-    subject: 'New Contact Form Submission', // Subject line
+    from: `"Contact Form" <${smtpConfig.auth.user}>`, 
+    to: recipientEmail, 
+    replyTo: email, 
+    subject: 'New Contact Form Submission', 
     text: `
       New contact form submission:
 
@@ -75,10 +77,10 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     `,
   };
 
+  // --- Try sending email ---
   try {
     await transporter.sendMail(mailOptions);
     console.log('Contact form email sent successfully.');
-    // Redirect to success page
     return redirect('/thank-you', 303);
 
   } catch (error) {
@@ -91,8 +93,6 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     if (referer) {
         const url = new URL(referer);
         url.searchParams.set('submission', 'error');
-        // You could add a generic error code here if needed
-        // url.searchParams.set('errorCode', 'EMAIL_SEND_FAILED'); 
         redirectUrl = url.toString();
     }
 
