@@ -9,6 +9,13 @@ import nodemailer from 'nodemailer';
 // SMTP_PASS: Your SMTP password (or app-specific password if using Gmail/Outlook)
 // RECIPIENT_EMAIL: The email address to send the form submissions to (pranav@possibleminds.in)
 
+// --- Environment Variable Checks ---
+const missingVars: string[] = [];
+if (!import.meta.env.SMTP_HOST) missingVars.push('SMTP_HOST');
+if (!import.meta.env.SMTP_PORT) missingVars.push('SMTP_PORT'); // Also check port
+if (!import.meta.env.SMTP_USER) missingVars.push('SMTP_USER');
+if (!import.meta.env.SMTP_PASS) missingVars.push('SMTP_PASS');
+
 const smtpConfig = {
   host: import.meta.env.SMTP_HOST,
   port: parseInt(import.meta.env.SMTP_PORT || '587', 10),
@@ -23,11 +30,15 @@ const recipientEmail = import.meta.env.RECIPIENT_EMAIL || 'pranav@possibleminds.
 
 export const POST: APIRoute = async ({ request, redirect }) => {
   
-  // Basic check if SMTP config is present
-  if (!smtpConfig.host || !smtpConfig.auth.user || !smtpConfig.auth.pass) {
-    console.error('SMTP configuration missing in environment variables.');
-    // Consider redirecting to an error page or showing a generic error
-     return new Response("Server configuration error.", { status: 500 });
+  // Enhanced check for missing SMTP config
+  if (missingVars.length > 0) {
+    const errorMsg = `SMTP configuration error: Missing environment variable(s): ${missingVars.join(', ')}`;
+    console.error(errorMsg);
+    // Return a user-friendly, generic error to the browser
+    return new Response(
+        "There was a problem with the server configuration. Please contact support if the issue persists.", 
+        { status: 500 }
+    );
   }
 
   const formData = await request.formData();
@@ -71,16 +82,21 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     return redirect('/thank-you', 303);
 
   } catch (error) {
-    console.error('Error sending contact form email:', error);
-    // Redirect back to form page with error query param
+    // Log detailed error from nodemailer
+    console.error('Error sending contact form email via SMTP:', error);
+    
+    // Determine the referer URL for redirect
     const referer = request.headers.get('referer');
+    let redirectUrl = '/'; // Default fallback redirect
     if (referer) {
         const url = new URL(referer);
         url.searchParams.set('submission', 'error');
-        // Maybe add more specific error info if needed, but be careful not to expose sensitive details
-        return redirect(url.toString(), 303);
+        // You could add a generic error code here if needed
+        // url.searchParams.set('errorCode', 'EMAIL_SEND_FAILED'); 
+        redirectUrl = url.toString();
     }
-     // Fallback if referer is not available
-    return new Response("Failed to send message.", { status: 500 });
+
+    // Redirect back to form page with error query param
+    return redirect(redirectUrl, 303);
   }
 }; 
