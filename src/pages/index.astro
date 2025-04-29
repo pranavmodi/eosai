@@ -81,10 +81,6 @@ const testimonials = [
     secondaryButtonLink="/services"
   />
 
-  <!-- 1. Add a container element where the chat widget will be mounted -->
-  <!-- You can place this anywhere suitable in your body, often in the footer -->
-  <div id="chatbot-widget-container"></div>
-
   <!-- 2. Include React libraries -->
   <script is:inline src="https://18.191.116.176:5000/static/vendor/react.production.min.js"></script>
   <script is:inline src="https://18.191.116.176:5000/static/vendor/react-dom.production.min.js"></script>
@@ -93,14 +89,23 @@ const testimonials = [
   <script is:inline>
     window.CHATBOT_CONFIG = {
       // --- Customizable Settings ---
-      position: "right",              // "left" or "right"
       primaryColor: "#0066cc",       // Main color theme
       secondaryColor: "#f0f2f5",     // Secondary color theme
       buttonText: "Chat with us",     // Text on the minimized button
       headerText: "Possible Minds Assistant", // Text in the widget header
       placeholder: "Type your message...", // Placeholder text in the input
       // --- Server Configuration (Do Not Change Without Server Update) ---
-      apiUrl: "https://18.191.116.176:5000/api/v1/chat/" // API endpoint
+      apiUrl: "https://18.191.116.176:5000/api/v1/chat/", // API endpoint
+      // --- New Positioning Styles ---
+       widgetPositionStyles: {
+          position: 'fixed',
+          top: '50%',          // Vertical center
+          left: '52%',         // Start 52% from the left edge
+          right: 'auto',        // Unset right
+          bottom: 'auto',       // Unset bottom
+          transform: 'translate(-50%, -50%)' // Adjust horizontally & vertically relative to the top-left corner
+        },
+        startOpen: true
     };
   </script>
 
