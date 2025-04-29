@@ -81,41 +81,51 @@ const testimonials = [
     secondaryButtonLink="/services"
   />
 
-  <!-- Chat Widget -->
-  <script>
-    declare global {
-      interface Window {
-        PRECISEMRI_CHAT_CONFIG: any;
+  <!-- 1. Add a container element where the chat widget will be mounted -->
+  <!-- You can place this anywhere suitable in your body, often in the footer -->
+  <div id="chatbot-widget-container"></div>
+
+  <!-- 2. Include React libraries -->
+  <script is:inline src="http://18.191.116.176:5000/static/vendor/react.production.min.js"></script>
+  <script is:inline src="http://18.191.116.176:5000/static/vendor/react-dom.production.min.js"></script>
+
+  <!-- 3. Configure the widget -->
+  <script is:inline>
+    window.CHATBOT_CONFIG = {
+      // --- Customizable Settings ---
+      position: "right",              // "left" or "right"
+      primaryColor: "#0066cc",       // Main color theme
+      secondaryColor: "#f0f2f5",     // Secondary color theme
+      buttonText: "Chat with us",     // Text on the minimized button
+      headerText: "Possible Minds Assistant", // Text in the widget header
+      placeholder: "Type your message...", // Placeholder text in the input
+      // --- Server Configuration (Do Not Change Without Server Update) ---
+      apiUrl: "http://18.191.116.176:5000/api/v1/chat/" // API endpoint
+    };
+  </script>
+
+  <!-- 4. Load the widget script -->
+  <script is:inline src="http://18.191.116.176:5000/static/precisemri-chat-widget.min.js"></script>
+
+  <!-- 5. Initialize the widget -->
+  <script is:inline>
+    (function() {
+      // Ensure the container ID here matches the ID in step 1
+      const customContainer = document.getElementById('chatbot-widget-container');
+      if (customContainer && window.PreciseMRIChatWidget && window.PreciseMRIChatWidget.mount) {
+        window.PreciseMRIChatWidget.mount(customContainer);
+        console.log("Possible Minds Chat Widget Initialized.");
+      } else {
+        // Retry initialization after a short delay, as scripts might load out of order
+        setTimeout(() => {
+          if (customContainer && window.PreciseMRIChatWidget && window.PreciseMRIChatWidget.mount) {
+             window.PreciseMRIChatWidget.mount(customContainer);
+             console.log("Possible Minds Chat Widget Initialized (after delay).");
+          } else {
+            console.error("Could not initialize Possible Minds Chat Widget. Container or Widget script not found.");
+          }
+        }, 500); // Wait 500ms
       }
-    }
-
-    // Debug logger
-    function log(message) {
-      console.log(`[Chat Widget] ${message}`);
-    }
-
-    // Error handler
-    window.onerror = function(msg, url, line) {
-      log(`Error: ${msg}\nURL: ${url}\nLine: ${line}`);
-      return false;
-    };
-
-    // Configuration
-    window.PRECISEMRI_CHAT_CONFIG = {
-      apiUrl: 'http://54.71.183.198:50000/api/v1/chat/',
-      theme: {
-        primaryColor: '#0066cc',
-        buttonPosition: 'bottom-right'
-      },
-      debug: true
-    };
-
-    // Load the widget
-    log('Loading chat widget...');
-    const script = document.createElement('script');
-    script.src = 'http://54.71.183.198:50000/widget/chat.js';
-    script.onload = () => log('Chat widget script loaded successfully');
-    script.onerror = (error) => log('Error loading chat widget: ' + error);
-    document.body.appendChild(script);
+    })();
   </script>
 </Layout>
