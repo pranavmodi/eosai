@@ -1,0 +1,72 @@
+---
+// Define pricing tiers data for Support Chatbot
+const pricingTiers = [
+  {
+    name: 'Chatbot Pro',
+    price: '$99',
+    frequency: '/month',
+    description: 'Ideal for businesses needing powerful AI support with key integrations.',
+    features: [
+      'Auto-crawl & RAG Brain (Up to 100 pages)',
+      'Cited Answers',
+      'Omni-channel Widget',
+      'Multilingual Support (10 Languages)',
+      'Conversation Memory',
+      'Standard Analytics Dashboard',
+      'Email Support'
+    ],
+    buttonText: 'Get Started',
+    buttonLink: '/contact?tier=chatbot-pro'
+  },
+  {
+    name: 'Chatbot Enterprise',
+    price: 'Custom',
+    frequency: '',
+    description: 'Comprehensive AI support solution for large-scale operations with advanced needs.',
+    features: [
+      'Unlimited Auto-crawl & RAG Brain',
+      'Cited Answers & Custom Sources',
+      'Omni-channel Widget & API Access',
+      'Full Multilingual Support (~50 Languages)',
+      'Conversation Memory & User ID Linking',
+      'Smart Escalation & CRM Integrations',
+      'Advanced Analytics & Training Loop',
+      'No-code Guardrails',
+      'Dedicated Account Manager & Priority Support'
+    ],
+    buttonText: 'Contact Sales',
+    buttonLink: '/contact?tier=chatbot-enterprise'
+  }
+];
+---
+
+<section id="pricing" class="py-24 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-4xl font-bold text-center mb-16 text-gray-900">Support Chatbot Pricing</h2>
+    <div class="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto">
+      {pricingTiers.map(tier => (
+        <div class="border border-gray-200 rounded-lg p-8 flex flex-col shadow-lg">
+          <h3 class="text-2xl font-semibold text-gray-900">{tier.name}</h3>
+          <p class="mt-4 text-gray-500">{tier.description}</p>
+          <div class="mt-6">
+            <span class="text-4xl font-bold text-gray-900">{tier.price}</span>
+            {tier.frequency && <span class="text-base font-medium text-gray-500">{tier.frequency}</span>}
+          </div>
+          <ul class="mt-8 space-y-4 text-gray-600 flex-grow">
+            {tier.features.map(feature => (
+              <li class="flex items-start">
+                <svg class="flex-shrink-0 h-6 w-6 text-green-500 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>{feature}</span>
+              </li>
+            ))}
+          </ul>
+          <a href={tier.buttonLink} class="mt-8 block w-full bg-blue-600 border border-transparent rounded-md py-3 px-8 text-center font-medium text-white hover:bg-blue-700">
+            {tier.buttonText}
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+</section> 

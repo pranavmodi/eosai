@@ -1,0 +1,56 @@
+---
+// Define testimonials data
+const testimonials = [
+  {
+    name: 'Danny Rackow',
+    role: 'CEO',
+    company: 'Precise Imaging',
+    content: 'PossibleMinds transformed how we handle customer inquiries. Their AI supportbot is efficient, accurate, and has significantly improved our response times.',
+    image: '/testimonials/danny.jpg' // Placeholder image path
+  },
+  {
+    name: 'Sarah Johnson',
+    role: 'CTO',
+    company: 'TechCorp',
+    content: 'Working with AI Nexus transformed our approach to AI implementation. Their expertise and guidance were invaluable.',
+    image: '/testimonials/sarah.jpg' // Placeholder image path
+  },
+  {
+    name: 'Michael Chen',
+    role: 'CEO',
+    company: 'InnovateX',
+    content: 'The results we have achieved with AI Nexus have exceeded our expectations. They are true partners in innovation.',
+    image: '/testimonials/michael.jpg' // Placeholder image path
+  }
+];
+---
+
+<section class="py-24 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-4xl font-bold text-center mb-16 text-gray-900">What Our Clients Say</h2>
+    <div class="grid gap-8 md:grid-cols-1 lg:grid-cols-3 max-w-sm mx-auto md:max-w-none">
+      {testimonials.map(testimonial => (
+        <div class="flex flex-col rounded-lg shadow-lg overflow-hidden">
+          <div class="flex-1 bg-gray-50 p-6 flex flex-col justify-between">
+            <div class="flex-1">
+              <blockquote class="mt-2">
+                <p class="text-xl font-semibold text-gray-900">
+                  “{testimonial.content}”
+                </p>
+              </blockquote>
+            </div>
+            <div class="mt-6 flex items-center">
+              <div class="flex-shrink-0">
+                <img class="h-10 w-10 rounded-full" src={testimonial.image} alt={`Photo of ${testimonial.name}`}>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm font-medium text-gray-900">{testimonial.name}</p>
+                <p class="text-sm text-gray-500">{testimonial.role}, {testimonial.company}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section> 

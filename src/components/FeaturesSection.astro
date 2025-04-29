@@ -1,0 +1,99 @@
+---
+// Define features data
+const features = [
+  {
+    name: 'Auto-crawl & RAG Brain',
+    description: 'Point it at your site/docs/PDFs to build a live knowledge-base (Retrieval-Augmented Generation) in minutes—no manual tagging.',
+    icon: 'brain' // Placeholder icon name
+  },
+  {
+    name: 'Cited Answers',
+    description: 'Every reply includes clickable sources, building instant trust with prospects and customers.',
+    icon: 'link' // Placeholder icon name
+  },
+  {
+    name: 'Omni-channel Widget & API',
+    description: 'Deploy via web chat, Slack, MS Teams, WhatsApp with a simple script or API call.',
+    icon: 'widget' // Placeholder icon name
+  },
+  {
+    name: '24×7 Multilingual Support',
+    description: 'Powered by GPT-4-turbo, offering support in ~50 languages out of the box.',
+    icon: 'language' // Placeholder icon name
+  },
+  {
+    name: 'Conversation Memory',
+    description: 'Remembers past interactions with visitors (via cookie or user ID) for seamless follow-ups.',
+    icon: 'memory' // Placeholder icon name
+  },
+  {
+    name: 'Smart Escalation',
+    description: 'Detects sentiment/complexity, routing leads to Sales or tickets to Zendesk, Intercom, etc.',
+    icon: 'escalation' // Placeholder icon name
+  },
+  {
+    name: 'Analytics & Training Loop',
+    description: 'Dashboard tracks deflection, CSAT, knowledge gaps; retrain easily with one click.',
+    icon: 'analytics' // Placeholder icon name
+  },
+  {
+    name: 'No-code Guardrails',
+    description: 'Set point-and-click policies to prevent leaks of sensitive info like roadmaps or pricing.',
+    icon: 'shield' // Placeholder icon name
+  },
+  {
+    name: 'Usage-based Pricing',
+    description: 'Start free and pay as conversations generate value—no wasted spend on unused software.',
+    icon: 'dollar' // Placeholder icon name
+  }
+];
+---
+
+<section id="features" class="py-24 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <h2 class="text-base font-semibold text-blue-600 tracking-wide uppercase">Features</h2>
+      <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+        Everything You Need for Smarter Support
+      </p>
+      <p class="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+        Explore the powerful capabilities that make PossibleMinds Supportbot the ideal AI assistant.
+      </p>
+    </div>
+
+    <div class="mt-16 shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-100">
+          <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Feature
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Description
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {features.map((feature) => (
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <!-- Green checkmark icon -->
+                  <svg class="flex-shrink-0 h-6 w-6 text-green-500 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <div class="text-sm font-medium text-gray-900">
+                    {feature.name}
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="text-sm text-gray-500">{feature.description}</div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section> 
