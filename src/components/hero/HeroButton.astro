@@ -2,9 +2,11 @@
 interface Props {
   href: string;
   variant: 'primary' | 'secondary';
+  target?: string;
+  rel?: string;
 }
 
-const { href, variant } = Astro.props;
+const { href, variant, target, rel } = Astro.props;
 
 const styles = {
   primary: 'bg-white text-primary hover:bg-gray-100 shadow-lg hover:shadow-xl',
@@ -14,6 +16,8 @@ const styles = {
 
 <a
   href={href}
+  target={target}
+  rel={rel}
   class:list={[
     'px-8 py-4 rounded-full font-semibold transition-all duration-300',
     styles[variant]
