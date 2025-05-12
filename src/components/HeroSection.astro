@@ -2,21 +2,12 @@
 import HeroText from './hero/HeroText.astro';
 ---
 
-<section class="relative min-h-[90vh] flex items-center overflow-hidden">
-  <div class="absolute inset-0 w-full h-full">
-    <video 
-      autoplay 
-      loop 
-      muted 
-      playsinline 
-      class="absolute inset-0 w-full h-full object-cover"
-    >
-      <source src="/home-page.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-    <div class="absolute inset-0 bg-black/40"></div>
-  </div>
-  
+<section 
+  class="relative min-h-[90vh] flex items-center overflow-hidden bg-cover bg-center" 
+  style="background-image: url('/heroimage.png');"
+>
+  <div class="absolute inset-0 bg-black/40"></div>
+
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
     <div class="grid lg:grid-cols-2 gap-12 items-center">
       <HeroText />
