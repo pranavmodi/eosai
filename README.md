@@ -55,3 +55,7 @@ Feel free to check [our documentation](https://docs.astro.build) or jump into ou
 
 
 curl -X POST -d {} https://api.netlify.com/build_hooks/674ed9ba4f569c00a1472232
+
+**Prompt used to generate the hero image:**
+
+An ultra-detailed 8K widescreen hero background (3840 × 2160) for a SaaS website — midnight-indigo-to-deep-teal gradient, luminous cyan & emerald accents. Abstract flowing data ribbons weave across the canvas, converging into a soft-glow chat-bubble silhouette at center-right; faint wireframe UI panels and dotted node constellations hint at real-time knowledge retrieval. Cinematic volumetric lighting with subtle bokeh, glass-morphism shards, and gentle ray-traced reflections give a refined, Apple-esque polish while leaving plenty of negative space for copy on the left. No text, no branding, just an elegant, future-forward vibe that suggests 24×7 multilingual AI support. Rendered in photorealistic 3-D concept-art style, trending on ArtStation, highly aesthetic.
