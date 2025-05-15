@@ -87,11 +87,14 @@ const testimonials = [
     secondaryButtonLink="/services"
   />
 
-  <!-- 2. Include React libraries -->
+  <!-- Step 1: Add this container div somewhere in your HTML, preferably at the end of your body -->
+  <div id="chatbot-container"></div>
+
+  <!-- Step 2: Include React libraries -->
   <script is:inline src="https://api.possibleminds.in/static/vendor/react.production.min.js"></script>
   <script is:inline src="https://api.possibleminds.in/static/vendor/react-dom.production.min.js"></script>
 
-  <!-- 3. Configure the widget -->
+  <!-- Step 3: Configure the widget -->
   <script is:inline>
     window.CHATBOT_CONFIG = {
       // --- Customizable Settings ---
@@ -99,9 +102,11 @@ const testimonials = [
       secondaryColor: "#f0f2f5",     // Secondary color theme
       buttonText: "Chat with us",     // Text on the minimized button
       headerText: "Possible Minds Assistant", // Text in the widget header
+      welcomeMessage: "Hello! How can I help you today?", // Welcome message
       placeholder: "Type your message...", // Placeholder text in the input
       // --- Server Configuration (Do Not Change Without Server Update) ---
       apiUrl: "https://api.possibleminds.in/api/v1/chat/", // API endpoint
+      tenantId: "3efc36dc-baca-4001-b884-f551df05d095", // Your unique tenant ID
       // --- New Positioning Styles ---
       widgetPositionStyles: {
           position: 'fixed',
@@ -112,22 +117,22 @@ const testimonials = [
     };
   </script>
 
-  <!-- 4. Load the widget script -->
+  <!-- Step 4: Load the widget script -->
   <script is:inline src="https://api.possibleminds.in/static/precisemri-chat-widget.min.js"></script>
 
-  <!-- 5. Initialize the widget -->
+  <!-- Step 5: Initialize the widget -->
   <script is:inline>
     (function() {
       // Ensure the container ID here matches the ID in step 1
-      const customContainer = document.getElementById('chatbot-widget-container');
-      if (customContainer && window.PreciseMRIChatWidget && window.PreciseMRIChatWidget.mount) {
-        window.PreciseMRIChatWidget.mount(customContainer);
+      const container = document.getElementById('chatbot-container');
+      if (container && window.PreciseMRIChatWidget && window.PreciseMRIChatWidget.mount) {
+        window.PreciseMRIChatWidget.mount(container);
         console.log("Possible Minds Chat Widget Initialized.");
       } else {
         // Retry initialization after a short delay, as scripts might load out of order
         setTimeout(() => {
-          if (customContainer && window.PreciseMRIChatWidget && window.PreciseMRIChatWidget.mount) {
-             window.PreciseMRIChatWidget.mount(customContainer);
+          if (container && window.PreciseMRIChatWidget && window.PreciseMRIChatWidget.mount) {
+             window.PreciseMRIChatWidget.mount(container);
              console.log("Possible Minds Chat Widget Initialized (after delay).");
           } else {
             console.error("Could not initialize Possible Minds Chat Widget. Container or Widget script not found.");
