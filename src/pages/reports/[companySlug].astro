@@ -2,6 +2,8 @@
 import { strategicReports } from '../../data/reports';
 import ReportLayout from '../../layouts/ReportLayout.astro';
 
+export const prerender = true;
+
 export async function getStaticPaths() {
   return strategicReports.map((report) => ({
     params: { companySlug: report.companySlug },
