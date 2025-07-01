@@ -1,0 +1,15 @@
+---
+import { strategicReports } from '../../data/reports';
+import ReportLayout from '../../layouts/ReportLayout.astro';
+
+export async function getStaticPaths() {
+  return strategicReports.map((report) => ({
+    params: { companySlug: report.companySlug },
+    props: { report },
+  }));
+}
+
+const { report } = Astro.props;
+---
+
+<ReportLayout report={report} /> 

@@ -1,0 +1,117 @@
+---
+import type { StrategicReport } from '../data/reports';
+
+interface Props extends StrategicReport {}
+
+const { 
+  companyName, 
+  companySlug, 
+  title, 
+  description, 
+  industry, 
+  publishedDate, 
+  author, 
+  metrics, 
+  tags, 
+  readTime 
+} = Astro.props;
+
+const formattedDate = new Date(publishedDate).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric'
+});
+---
+
+<article class="group glass-card rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-white border border-gray-100">
+  <!-- Header with Company Info -->
+  <div class="relative bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white p-6">
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20"></div>
+    <div class="relative z-10">
+      <div class="flex items-start justify-between mb-4">
+        <span class="inline-flex items-center px-3 py-1 bg-white/10 rounded-full text-sm font-medium backdrop-blur-sm border border-white/20">
+          <svg class="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"/>
+            <path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd"/>
+          </svg>
+          {industry}
+        </span>
+        <div class="text-right">
+          <div class="text-2xl font-bold text-blue-200">{metrics.growthRate}</div>
+          <div class="text-xs text-blue-300">Growth</div>
+        </div>
+      </div>
+      <h2 class="text-lg font-bold mb-2 leading-tight group-hover:text-blue-200 transition-colors">
+        {companyName}
+      </h2>
+      <h3 class="text-sm text-blue-100 leading-relaxed">
+        {title}
+      </h3>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="p-6">
+    <p class="text-gray-600 mb-6 leading-relaxed line-clamp-3">
+      {description}
+    </p>
+
+    <!-- Key Metrics Row -->
+    <div class="grid grid-cols-3 gap-3 mb-6">
+      <div class="text-center p-3 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
+        <div class="text-sm font-bold text-blue-700">{metrics.marketSize}</div>
+        <div class="text-xs text-gray-500 mt-1">Market</div>
+      </div>
+      <div class="text-center p-3 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border border-green-100">
+        <div class="text-sm font-bold text-green-700">{metrics.competitiveAdvantage}</div>
+        <div class="text-xs text-gray-500 mt-1">Position</div>
+      </div>
+      <div class="text-center p-3 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg border border-amber-100">
+        <div class="text-sm font-bold text-amber-700">{metrics.riskLevel}</div>
+        <div class="text-xs text-gray-500 mt-1">Risk</div>
+      </div>
+    </div>
+
+    <!-- Tags -->
+    <div class="flex flex-wrap gap-2 mb-6">
+      {tags.slice(0, 3).map(tag => (
+        <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded-md text-xs font-medium">
+          #{tag}
+        </span>
+      ))}
+      {tags.length > 3 && (
+        <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded-md text-xs font-medium">
+          +{tags.length - 3}
+        </span>
+      )}
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+      <div class="flex items-center">
+        <img 
+          src={author.avatar} 
+          alt={author.name}
+          class="w-8 h-8 rounded-full object-cover mr-3 ring-2 ring-blue-100"
+        />
+        <div>
+          <p class="text-gray-900 font-medium text-sm">{author.name}</p>
+          <p class="text-gray-500 text-xs">{formattedDate}</p>
+        </div>
+      </div>
+      <div class="flex items-center text-blue-600">
+        <span class="text-sm font-medium mr-2">{readTime}</span>
+        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Clickable Overlay -->
+  <a 
+    href={`/reports/${companySlug}`}
+    class="absolute inset-0 z-10"
+    aria-label={`Read strategic report for ${companyName}`}
+  ></a>
+</article> 
