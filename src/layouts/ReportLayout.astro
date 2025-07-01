@@ -13,12 +13,24 @@ const formattedDate = new Date(report.publishedDate).toLocaleDateString('en-US',
   day: 'numeric'
 });
 
-// Extract UTM parameters from URL for tracking
-const url = new URL(Astro.request.url);
-const utmSource = url.searchParams.get('utm_source');
-const utmMedium = url.searchParams.get('utm_medium');
-const utmCampaign = url.searchParams.get('utm_campaign');
-const contactId = url.searchParams.get('contact_id');
+// Extract UTM parameters from URL for tracking (safely handle static generation)
+let utmSource = null;
+let utmMedium = null;
+let utmCampaign = null;
+let contactId = null;
+
+try {
+  if (Astro.request?.url) {
+    const url = new URL(Astro.request.url);
+    utmSource = url.searchParams.get('utm_source');
+    utmMedium = url.searchParams.get('utm_medium');
+    utmCampaign = url.searchParams.get('utm_campaign');
+    contactId = url.searchParams.get('contact_id');
+  }
+} catch (error) {
+  // Fallback for static generation - UTM params will be handled client-side
+  console.log('URL parsing skipped during static generation');
+}
 ---
 
 <Layout title={report.title} description={report.description}>

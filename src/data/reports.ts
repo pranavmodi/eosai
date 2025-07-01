@@ -51,8 +51,8 @@ export const strategicReports: StrategicReport[] = [
     publishedDate: "2024-01-15",
     generatedDate: "2024-01-12",
     author: {
-      name: "Dr. Sarah Chen", 
-      avatar: "/authors/sarah-chen.jpg",
+      name: "Dr. Emily Chen", 
+      avatar: "/authors/emily-chen.jpg",
       title: "Principal AI Strategist"
     },
     executiveSummary: "Visco Spine Joint Center stands at a pivotal moment to transform its operations through strategic AI implementation. Our analysis reveals significant opportunities to enhance patient care quality, reduce operational costs by 25-30%, and establish market leadership in AI-driven healthcare.",
