@@ -1,4 +1,4 @@
-const { getStore } = require('@netlify/blobs'); // Netlify Blobs SDK
+const { getStore, connectLambda } = require('@netlify/blobs'); // Netlify Blobs SDK
 
 // Note: Since we can't directly require TypeScript files in Node.js functions,
 // we'll include the static data inline for fallback purposes
@@ -141,6 +141,8 @@ exports.handler = async (event, context) => {
 
     // Attempt to fetch from Netlify Blobs (persistent storage)
     try {
+      // Connect Lambda for Netlify Blobs compatibility
+      connectLambda(event);
       const store = getStore('reports');
       const raw = await store.get(slug);
       if (raw) {

@@ -1,5 +1,5 @@
 // We'll include the static data inline for fallback purposes
-const { getStore } = require('@netlify/blobs'); // Netlify Blobs SDK
+const { getStore, connectLambda } = require('@netlify/blobs'); // Netlify Blobs SDK
 const staticReportsData = [
   {
     id: "visco-spine-joint-center-1751348740637",
@@ -122,6 +122,8 @@ exports.handler = async (event, context) => {
     // Fetch dynamic reports from Netlify Blobs (persistent storage)
     let dynamicReports = [];
     try {
+      // Connect Lambda for Netlify Blobs compatibility
+      connectLambda(event);
       const store = getStore('reports');
       const listResult = await store.list();
       const blobs = listResult?.blobs || [];
