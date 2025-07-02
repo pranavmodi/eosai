@@ -1,5 +1,5 @@
-// Note: Since we can't directly require TypeScript files in Node.js functions,
-// we'll include the static data inline for fallback purposes
+// We'll include the static data inline for fallback purposes
+const { list, get } = require('@netlify/blobs'); // Netlify Blobs SDK
 const staticReportsData = [
   {
     id: "visco-spine-joint-center-1751348740637",
@@ -119,8 +119,29 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Get dynamic reports from global store
-    const dynamicReports = global.reportsData || [];
+    // Fetch dynamic reports from Netlify Blobs (persistent storage)
+    let dynamicReports = [];
+    try {
+      const listResult = await list({ prefix: 'reports/' });
+      const blobPaths = listResult?.blobs || [];
+
+      dynamicReports = await Promise.all(blobPaths.map(async (blobInfo) => {
+        try {
+          const blob = await get(blobInfo.pathname);
+          // get() returns a Response-like object in Netlify runtime
+          const raw = await blob.text();
+          return JSON.parse(raw);
+        } catch (blobErr) {
+          console.error('Error parsing blob', blobInfo.pathname, blobErr);
+          return null;
+        }
+      }));
+      // Filter out nulls
+      dynamicReports = dynamicReports.filter(Boolean);
+    } catch (blobListErr) {
+      console.error('Error listing blobs:', blobListErr);
+      dynamicReports = [];
+    }
     
     // Combine with static reports (dynamic takes precedence for same slugs)
     const staticReports = staticReportsData || [];

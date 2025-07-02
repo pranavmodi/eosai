@@ -1,3 +1,5 @@
+const { get } = require('@netlify/blobs'); // Netlify Blobs SDK
+
 // Note: Since we can't directly require TypeScript files in Node.js functions,
 // we'll include the static data inline for fallback purposes
 const staticReportsData = [
@@ -135,11 +137,23 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // First, check dynamic reports
-    const dynamicReports = global.reportsData || [];
-    let report = dynamicReports.find(r => r.companySlug === slug);
-    
-    // If not found in dynamic reports, check static reports
+    let report = null;
+
+    // Attempt to fetch from Netlify Blobs (persistent storage)
+    try {
+      const blobResponse = await get(`reports/${slug}.json`);
+      if (blobResponse && blobResponse.ok) {
+        const text = await blobResponse.text();
+        report = JSON.parse(text);
+      }
+    } catch (blobErr) {
+      // If blob not found or error, continue to fallback checks
+      if (blobErr?.status !== 404) {
+        console.error('Error fetching blob', blobErr);
+      }
+    }
+
+    // Fallback to static reports if not found in blobs
     if (!report) {
       report = staticReportsData.find(r => r.companySlug === slug);
     }
