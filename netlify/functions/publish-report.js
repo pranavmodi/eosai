@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { getStore } = require('@netlify/blobs'); // Netlify Blobs SDK for persistent storage
+const { getStore, connectLambda } = require('@netlify/blobs'); // Netlify Blobs SDK for persistent storage
 
 // Environment variables (set these in Netlify dashboard)
 const WEBHOOK_SECRET = process.env.SALESBOT_WEBHOOK_SECRET || 'your-webhook-secret-key';
@@ -246,19 +246,12 @@ exports.handler = async (event, context) => {
     let blobSuccess = false;
     try {
       console.log('Attempting to save to Netlify Blobs...');
-      console.log('Available env vars:', Object.keys(process.env).filter(k => k.includes('NETLIFY')));
       
-      // Try different ways to get credentials
-      const siteId = process.env.NETLIFY_SITE_ID || 'd4712b75-1b6b-4372-bad3-152f6038fc08';
-      const token = process.env.NETLIFY_TOKEN || process.env.NETLIFY_AUTH_TOKEN;
+      // Connect Lambda for Netlify Blobs compatibility
+      connectLambda(event);
+      console.log('Lambda connected successfully');
       
-      console.log('Site ID:', siteId ? siteId.substring(0, 8) + '...' : 'missing');
-      console.log('Token:', token ? 'available' : 'missing');
-      
-      const store = getStore('reports', {
-        siteID: siteId,
-        token: token
-      });
+      const store = getStore('reports');
       console.log('Store obtained successfully');
       
       const result = await store.set(reportData.companySlug, JSON.stringify(reportData), {
