@@ -52,20 +52,23 @@ async function triggerNetlifyRebuild(reportData) {
       })
     });
 
+    // Netlify Build Hooks usually return plain text, not JSON
+    const responseBody = await response.text();
+
     if (response.ok) {
-      const result = await response.json();
-      console.log('Build triggered successfully:', result);
+      console.log('Build triggered successfully:', responseBody);
       return { 
         triggered: true, 
-        buildId: result.id,
+        status: response.status,
+        body: responseBody.trim(),
         message: 'Rebuild triggered successfully' 
       };
     } else {
-      console.error('Failed to trigger build:', response.status, response.statusText);
+      console.error('Failed to trigger build:', response.status, responseBody);
       return { 
         triggered: false, 
         reason: `Build trigger failed: ${response.status}`,
-        error: response.statusText 
+        error: responseBody.trim() 
       };
     }
   } catch (error) {
