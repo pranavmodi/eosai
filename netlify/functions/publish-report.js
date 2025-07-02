@@ -243,14 +243,22 @@ exports.handler = async (event, context) => {
     addReportToStore(reportData);
 
     // Persist report to Netlify Blobs (permanent storage)
+    let blobSuccess = false;
     try {
+      console.log('Attempting to save to Netlify Blobs...');
       const store = getStore('reports');
-      await store.set(reportData.companySlug, JSON.stringify(reportData), {
+      console.log('Store obtained successfully');
+      
+      const result = await store.set(reportData.companySlug, JSON.stringify(reportData), {
         metadata: { contentType: 'application/json' }
       });
-      console.log(`Report persisted to Netlify Blobs: reports/${reportData.companySlug}.json`);
+      
+      console.log(`Report persisted to Netlify Blobs successfully: reports/${reportData.companySlug}.json`, result);
+      blobSuccess = true;
     } catch (blobError) {
       console.error('Error saving report to Netlify Blobs:', blobError);
+      console.error('Error stack:', blobError.stack);
+      console.error('Error details:', JSON.stringify(blobError, Object.getOwnPropertyNames(blobError)));
     }
 
     // Trigger automatic rebuild
@@ -279,6 +287,7 @@ exports.handler = async (event, context) => {
           companySlug: reportData.companySlug,
           publishUrl: `https://possibleminds.in/reports/${reportData.companySlug}`,
           buildTriggered: buildResult.triggered,
+          blobPersisted: blobSuccess,
           estimatedAvailableAt: estimatedAvailableAt.toISOString(),
           estimatedWaitTime: '2-4 minutes'
         },
