@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const { getStore } = require('@netlify/blobs'); // Netlify Blobs SDK for persistent storage
 
 // Environment variables (set these in Netlify dashboard)
 const WEBHOOK_SECRET = process.env.SALESBOT_WEBHOOK_SECRET || 'your-webhook-secret-key';
@@ -240,6 +241,17 @@ exports.handler = async (event, context) => {
 
     // Store the report in memory immediately (available until next deploy)
     addReportToStore(reportData);
+
+    // Persist report to Netlify Blobs (permanent storage)
+    try {
+      const store = getStore('reports');
+      await store.set(reportData.companySlug, JSON.stringify(reportData), {
+        metadata: { contentType: 'application/json' }
+      });
+      console.log(`Report persisted to Netlify Blobs: reports/${reportData.companySlug}.json`);
+    } catch (blobError) {
+      console.error('Error saving report to Netlify Blobs:', blobError);
+    }
 
     // Trigger automatic rebuild
     const buildResult = await triggerNetlifyRebuild(reportData);

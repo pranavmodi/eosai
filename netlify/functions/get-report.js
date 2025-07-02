@@ -1,4 +1,4 @@
-const { get } = require('@netlify/blobs'); // Netlify Blobs SDK
+const { getStore } = require('@netlify/blobs'); // Netlify Blobs SDK
 
 // Note: Since we can't directly require TypeScript files in Node.js functions,
 // we'll include the static data inline for fallback purposes
@@ -141,16 +141,14 @@ exports.handler = async (event, context) => {
 
     // Attempt to fetch from Netlify Blobs (persistent storage)
     try {
-      const blobResponse = await get(`reports/${slug}.json`);
-      if (blobResponse && blobResponse.ok) {
-        const text = await blobResponse.text();
-        report = JSON.parse(text);
+      const store = getStore('reports');
+      const raw = await store.get(slug);
+      if (raw) {
+        report = JSON.parse(raw);
       }
     } catch (blobErr) {
       // If blob not found or error, continue to fallback checks
-      if (blobErr?.status !== 404) {
-        console.error('Error fetching blob', blobErr);
-      }
+      console.error('Error fetching blob', blobErr);
     }
 
     // Fallback to static reports if not found in blobs

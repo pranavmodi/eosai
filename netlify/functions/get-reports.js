@@ -1,5 +1,5 @@
 // We'll include the static data inline for fallback purposes
-const { list, get } = require('@netlify/blobs'); // Netlify Blobs SDK
+const { getStore } = require('@netlify/blobs'); // Netlify Blobs SDK
 const staticReportsData = [
   {
     id: "visco-spine-joint-center-1751348740637",
@@ -122,17 +122,16 @@ exports.handler = async (event, context) => {
     // Fetch dynamic reports from Netlify Blobs (persistent storage)
     let dynamicReports = [];
     try {
-      const listResult = await list({ prefix: 'reports/' });
-      const blobPaths = listResult?.blobs || [];
+      const store = getStore('reports');
+      const listResult = await store.list();
+      const blobs = listResult?.blobs || [];
 
-      dynamicReports = await Promise.all(blobPaths.map(async (blobInfo) => {
+      dynamicReports = await Promise.all(blobs.map(async (blobInfo) => {
         try {
-          const blob = await get(blobInfo.pathname);
-          // get() returns a Response-like object in Netlify runtime
-          const raw = await blob.text();
+          const raw = await store.get(blobInfo.key);
           return JSON.parse(raw);
         } catch (blobErr) {
-          console.error('Error parsing blob', blobInfo.pathname, blobErr);
+          console.error('Error parsing blob', blobInfo.key, blobErr);
           return null;
         }
       }));
