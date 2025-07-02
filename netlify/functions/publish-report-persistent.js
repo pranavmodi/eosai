@@ -1,14 +1,154 @@
 const crypto = require('crypto');
 
-// Environment variables (set these in Netlify dashboard)
+// Environment variables
 const WEBHOOK_SECRET = process.env.SALESBOT_WEBHOOK_SECRET || 'your-webhook-secret-key';
-const NETLIFY_BUILD_HOOK = process.env.NETLIFY_BUILD_HOOK; // Add this to your Netlify env vars
 
-// Store reports in global memory for immediate access
+// Option 1: Simple File-based Persistence (using Netlify Large Media or external storage)
+// For production, replace this with a database solution
+
+// Fallback to in-memory if no persistent storage is configured
 global.reportsData = global.reportsData || [];
 
-// Helper function to add/update a report in the store
-function addReportToStore(reportData) {
+// Database configuration - set these environment variables for persistence
+const DATABASE_TYPE = process.env.DATABASE_TYPE; // 'supabase', 'fauna', 'airtable', etc.
+const DATABASE_URL = process.env.DATABASE_URL;
+const DATABASE_KEY = process.env.DATABASE_KEY;
+
+// Supabase integration example
+async function saveReportToSupabase(reportData) {
+  if (DATABASE_TYPE !== 'supabase' || !DATABASE_URL || !DATABASE_KEY) {
+    throw new Error('Supabase not configured');
+  }
+  
+  try {
+    const response = await fetch(`${DATABASE_URL}/rest/v1/reports`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${DATABASE_KEY}`,
+        'apikey': DATABASE_KEY,
+        'Prefer': 'resolution=merge-duplicates'
+      },
+      body: JSON.stringify({
+        id: reportData.id,
+        company_slug: reportData.companySlug,
+        data: reportData,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Supabase error: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Supabase save error:', error);
+    throw error;
+  }
+}
+
+// Airtable integration example
+async function saveReportToAirtable(reportData) {
+  if (DATABASE_TYPE !== 'airtable' || !DATABASE_URL || !DATABASE_KEY) {
+    throw new Error('Airtable not configured');
+  }
+
+  try {
+    const response = await fetch(`https://api.airtable.com/v0/${DATABASE_URL}/Reports`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${DATABASE_KEY}`
+      },
+      body: JSON.stringify({
+        records: [{
+          fields: {
+            'ID': reportData.id,
+            'Company Slug': reportData.companySlug,
+            'Company Name': reportData.companyName,
+            'Title': reportData.title,
+            'Published Date': reportData.publishedDate,
+            'Data': JSON.stringify(reportData),
+            'Created': new Date().toISOString()
+          }
+        }]
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Airtable error: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Airtable save error:', error);
+    throw error;
+  }
+}
+
+// FaunaDB integration example
+async function saveReportToFauna(reportData) {
+  if (DATABASE_TYPE !== 'fauna' || !DATABASE_KEY) {
+    throw new Error('FaunaDB not configured');
+  }
+
+  try {
+    const response = await fetch('https://db.fauna.com/query/1', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${DATABASE_KEY}`
+      },
+      body: JSON.stringify({
+        query: {
+          create: {
+            collection: 'reports',
+            data: {
+              id: reportData.id,
+              companySlug: reportData.companySlug,
+              data: reportData,
+              createdAt: new Date().toISOString()
+            }
+          }
+        }
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`FaunaDB error: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('FaunaDB save error:', error);
+    throw error;
+  }
+}
+
+// Generic save function that routes to the configured database
+async function saveReportPersistent(reportData) {
+  try {
+    switch (DATABASE_TYPE) {
+      case 'supabase':
+        return await saveReportToSupabase(reportData);
+      case 'airtable':
+        return await saveReportToAirtable(reportData);
+      case 'fauna':
+        return await saveReportToFauna(reportData);
+      default:
+        console.warn('No persistent database configured, falling back to memory');
+        return addReportToMemory(reportData);
+    }
+  } catch (error) {
+    console.error('Persistent storage failed, falling back to memory:', error);
+    return addReportToMemory(reportData);
+  }
+}
+
+// Fallback to memory storage
+function addReportToMemory(reportData) {
   // Remove existing report with same slug if it exists
   global.reportsData = global.reportsData.filter(
     r => r.companySlug !== reportData.companySlug
@@ -22,60 +162,8 @@ function addReportToStore(reportData) {
     new Date(b.publishedDate) - new Date(a.publishedDate)
   );
   
-  console.log(`Report added. Total reports in store: ${global.reportsData.length}`);
+  console.log(`Report added to memory. Total reports: ${global.reportsData.length}`);
   return reportData;
-}
-
-// Function to trigger Netlify rebuild
-async function triggerNetlifyRebuild(reportData) {
-  if (!NETLIFY_BUILD_HOOK) {
-    console.warn('NETLIFY_BUILD_HOOK not configured - skipping rebuild');
-    return { triggered: false, reason: 'No build hook configured' };
-  }
-
-  try {
-    console.log(`Triggering rebuild for new report: ${reportData.companyName}`);
-    
-    const response = await fetch(NETLIFY_BUILD_HOOK, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        trigger_title: `New Report: ${reportData.companyName}`,
-        trigger_metadata: {
-          report_id: reportData.id,
-          company_name: reportData.companyName,
-          company_slug: reportData.companySlug,
-          triggered_at: new Date().toISOString()
-        }
-      })
-    });
-
-    if (response.ok) {
-      const result = await response.json();
-      console.log('Build triggered successfully:', result);
-      return { 
-        triggered: true, 
-        buildId: result.id,
-        message: 'Rebuild triggered successfully' 
-      };
-    } else {
-      console.error('Failed to trigger build:', response.status, response.statusText);
-      return { 
-        triggered: false, 
-        reason: `Build trigger failed: ${response.status}`,
-        error: response.statusText 
-      };
-    }
-  } catch (error) {
-    console.error('Error triggering build:', error);
-    return { 
-      triggered: false, 
-      reason: 'Build trigger error',
-      error: error.message 
-    };
-  }
 }
 
 // Verify webhook signature for security
@@ -164,7 +252,8 @@ function processReportData(salesbotData) {
       contactId: contact_id
     },
     isDynamic: true, // Flag to identify dynamically added reports
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   };
 
   return reportData;
@@ -231,28 +320,22 @@ exports.handler = async (event, context) => {
     }
 
     console.log('Processing report for:', salesbotData.company_name);
+    console.log('Storage type:', DATABASE_TYPE || 'memory (fallback)');
 
     // Process the report data
     const reportData = processReportData(salesbotData);
 
-    // Store the report in memory immediately (available until next deploy)
-    addReportToStore(reportData);
+    // Save the report with persistence
+    await saveReportPersistent(reportData);
 
-    // Trigger automatic rebuild
-    const buildResult = await triggerNetlifyRebuild(reportData);
-
-    console.log('Report processing completed:', {
+    console.log('Report saved successfully:', {
       id: reportData.id,
       company: reportData.companyName,
       slug: reportData.companySlug,
-      totalReports: global.reportsData.length,
-      buildTriggered: buildResult.triggered
+      storageType: DATABASE_TYPE || 'memory'
     });
 
-    // Calculate estimated availability time
-    const estimatedAvailableAt = new Date(Date.now() + (3 * 60 * 1000)); // 3 minutes from now
-
-    // Return success response with build information
+    // Return success response
     return {
       statusCode: 200,
       headers,
@@ -263,11 +346,8 @@ exports.handler = async (event, context) => {
           reportId: reportData.id,
           companySlug: reportData.companySlug,
           publishUrl: `https://possibleminds.in/reports/${reportData.companySlug}`,
-          buildTriggered: buildResult.triggered,
-          estimatedAvailableAt: estimatedAvailableAt.toISOString(),
-          estimatedWaitTime: '2-4 minutes'
-        },
-        buildInfo: buildResult
+          storageType: DATABASE_TYPE || 'memory'
+        }
       })
     };
 
@@ -283,8 +363,4 @@ exports.handler = async (event, context) => {
       })
     };
   }
-};
-
-// Export helper functions for use by other functions
-exports.getAllReports = () => global.reportsData || [];
-exports.getReportBySlug = (slug) => global.reportsData.find(r => r.companySlug === slug); 
+}; 

@@ -1,154 +1,88 @@
 ---
-export const prerender = true;
-
 import Layout from '../../layouts/Layout.astro';
-import SectionTitle from '../../components/shared/SectionTitle.astro';
 import ReportCard from '../../components/ReportCard.astro';
-import CTASection from '../../components/shared/CTASection.astro';
-import { strategicReports, reportCategories } from '../../data/reports';
+import SectionHeader from '../../components/shared/SectionHeader.astro';
 
-// Sort reports by published date (newest first)
-const reports = strategicReports.sort((a, b) => {
-  return new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime();
-});
+// Fetch reports from our local Netlify function
+async function fetchReportsFromLocalAPI() {
+  try {
+    // Use the site's own base URL for SSR
+    const baseUrl = Astro.site?.toString() || 'https://possibleminds.in';
+    const response = await fetch(`${baseUrl}/.netlify/functions/get-reports`);
+    
+    if (!response.ok) {
+      console.error(`Reports fetch failed: ${response.status} - ${response.statusText}`);
+      return [];
+    }
+    
+    const data = await response.json();
+    return data.reports || [];
+  } catch (error) {
+    console.error('Error fetching reports:', error);
+    return [];
+  }
+}
 
-const stats = {
-  totalReports: reports.length,
-  industries: reportCategories.length,
-  totalInsights: reports.reduce((sum, report) => sum + report.keyFindings.length, 0),
-  avgReadTime: Math.round(reports.reduce((sum, report) => sum + parseInt(report.readTime), 0) / reports.length)
-};
+const reports = await fetchReportsFromLocalAPI();
+
+// Calculate statistics
+const totalReports = reports.length;
+const totalCompanies = new Set(reports.map((r: any) => r.companyName)).size;
+const industries = new Set(reports.map((r: any) => r.industry)).size;
 ---
 
 <Layout 
   title="Strategic Reports & Analysis"
   description="Explore our comprehensive strategic reports and business intelligence insights across various industries"
 >
-  <!-- Hero Section -->
-  <div class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-      <div class="text-center">
-        <h1 class="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-          Strategic Intelligence Hub
-        </h1>
-        <p class="text-xl text-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed">
-          Discover comprehensive strategic analyses and actionable insights from our consulting engagements. 
-          Each report represents deep market research and proven methodologies applied to real-world challenges.
-        </p>
+  <div class="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <!-- Hero Section -->
+    <section class="py-24 bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 text-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+          <h1 class="text-5xl md:text-6xl font-bold mb-6">
+            Strategic Reports
+          </h1>
+          <p class="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+            Comprehensive business intelligence and strategic analysis to guide your AI transformation journey
+          </p>
+          
+          <!-- Statistics -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+            <div class="text-center">
+              <div class="text-4xl font-bold text-blue-400">{totalReports}</div>
+              <div class="text-blue-200">Strategic Reports</div>
+            </div>
+            <div class="text-center">
+              <div class="text-4xl font-bold text-blue-400">{totalCompanies}</div>
+              <div class="text-blue-200">Companies Analyzed</div>
+            </div>
+            <div class="text-center">
+              <div class="text-4xl font-bold text-blue-400">{industries}</div>
+              <div class="text-blue-200">Industries Covered</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reports Grid -->
+    <section class="py-24">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <!-- Statistics -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mt-12">
-          <div class="text-center p-6 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20">
-            <div class="text-3xl font-bold text-blue-200 mb-2">{stats.totalReports}</div>
-            <div class="text-sm text-blue-300">Strategic Reports</div>
+        {reports.length === 0 ? (
+          <div class="text-center py-16">
+            <div class="text-gray-500 text-lg mb-4">No reports available yet</div>
+            <p class="text-gray-400">Strategic reports will appear here once published through our system.</p>
           </div>
-          <div class="text-center p-6 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20">
-            <div class="text-3xl font-bold text-green-200 mb-2">{stats.industries}</div>
-            <div class="text-sm text-blue-300">Industries Covered</div>
+        ) : (
+          <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {reports.map((report: any) => (
+              <ReportCard {...report} />
+            ))}
           </div>
-          <div class="text-center p-6 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20">
-            <div class="text-3xl font-bold text-purple-200 mb-2">{stats.totalInsights}</div>
-            <div class="text-sm text-blue-300">Key Insights</div>
-          </div>
-          <div class="text-center p-6 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20">
-            <div class="text-3xl font-bold text-yellow-200 mb-2">{stats.avgReadTime}min</div>
-            <div class="text-sm text-blue-300">Avg. Read Time</div>
-          </div>
-        </div>
+        )}
       </div>
-    </div>
+    </section>
   </div>
-
-  <!-- Filters Section -->
-  <div class="bg-gray-50 border-b">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="flex flex-wrap gap-3 justify-center">
-        <button class="px-6 py-2.5 bg-blue-600 text-white rounded-full text-sm font-medium shadow-lg hover:bg-blue-700 transition-colors">
-          All Industries
-        </button>
-        {reportCategories.map(category => (
-          <button class="px-6 py-2.5 bg-white text-gray-700 rounded-full text-sm font-medium shadow-sm hover:bg-gray-50 border border-gray-200 transition-colors">
-            {category}
-          </button>
-        ))}
-      </div>
-    </div>
-  </div>
-
-  <!-- Reports Grid -->
-  <section class="py-16 bg-gradient-to-b from-gray-50 to-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <SectionTitle
-        title="Latest Strategic Reports"
-        subtitle="Deep-dive analyses and strategic recommendations from our consulting engagements"
-        gradient={true}
-      />
-      
-      <div class="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {reports.map((report) => (
-          <ReportCard {...report} />
-        ))}
-      </div>
-
-      <!-- Load More (Placeholder for future pagination) -->
-      <div class="text-center mt-16">
-        <button class="px-8 py-3 bg-white text-blue-600 border-2 border-blue-600 rounded-full font-semibold hover:bg-blue-600 hover:text-white transition-colors shadow-lg">
-          Load More Reports
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Features Section -->
-  <section class="py-16 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl font-bold text-gray-900 mb-4">Why Our Strategic Reports Matter</h2>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-          Each report represents hundreds of hours of research, analysis, and strategic thinking applied to real business challenges.
-        </p>
-      </div>
-
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="text-center p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
-          <div class="w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-          </div>
-          <h3 class="text-xl font-bold text-gray-900 mb-4">Data-Driven Insights</h3>
-          <p class="text-gray-600">Every recommendation is backed by comprehensive market research and quantitative analysis.</p>
-        </div>
-
-        <div class="text-center p-8 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-100">
-          <div class="w-16 h-16 bg-green-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
-            </svg>
-          </div>
-          <h3 class="text-xl font-bold text-gray-900 mb-4">Expert Analysis</h3>
-          <p class="text-gray-600">Our team of senior strategists brings decades of consulting experience to every report.</p>
-        </div>
-
-        <div class="text-center p-8 bg-gradient-to-br from-purple-50 to-violet-50 rounded-2xl border border-purple-100">
-          <div class="w-16 h-16 bg-purple-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-            </svg>
-          </div>
-          <h3 class="text-xl font-bold text-gray-900 mb-4">Actionable Roadmaps</h3>
-          <p class="text-gray-600">Clear implementation plans with specific timelines and measurable outcomes.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <CTASection
-    title="Ready for Your Strategic Analysis?"
-    description="Every successful transformation starts with deep understanding. Let us create a comprehensive strategic report for your organization."
-    primaryButtonText="Request Strategic Analysis"
-    primaryButtonLink="/contact?utm_source=reports&utm_medium=cta&utm_campaign=strategic-analysis"
-    secondaryButtonText="Explore Our Services"
-    secondaryButtonLink="/services?utm_source=reports&utm_medium=cta&utm_campaign=services"
-  />
 </Layout> 

@@ -1,0 +1,2 @@
+This website is hosted on netlify at https://possibleminds.in
+It interfaces with an offline tool called Salesbot which publishes reports and the website uses SSR to render those reports in realtime.
