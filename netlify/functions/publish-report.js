@@ -246,7 +246,19 @@ exports.handler = async (event, context) => {
     let blobSuccess = false;
     try {
       console.log('Attempting to save to Netlify Blobs...');
-      const store = getStore('reports');
+      console.log('Available env vars:', Object.keys(process.env).filter(k => k.includes('NETLIFY')));
+      
+      // Try different ways to get credentials
+      const siteId = process.env.NETLIFY_SITE_ID || 'd4712b75-1b6b-4372-bad3-152f6038fc08';
+      const token = process.env.NETLIFY_TOKEN || process.env.NETLIFY_AUTH_TOKEN;
+      
+      console.log('Site ID:', siteId ? siteId.substring(0, 8) + '...' : 'missing');
+      console.log('Token:', token ? 'available' : 'missing');
+      
+      const store = getStore('reports', {
+        siteID: siteId,
+        token: token
+      });
       console.log('Store obtained successfully');
       
       const result = await store.set(reportData.companySlug, JSON.stringify(reportData), {
