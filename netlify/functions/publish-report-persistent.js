@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const { getStore, connectLambda } = require('@netlify/blobs'); // Netlify Blobs SDK
 
 // Environment variables
 const WEBHOOK_SECRET = process.env.SALESBOT_WEBHOOK_SECRET || 'your-webhook-secret-key';
@@ -138,12 +139,35 @@ async function saveReportPersistent(reportData) {
       case 'fauna':
         return await saveReportToFauna(reportData);
       default:
-        console.warn('No persistent database configured, falling back to memory');
-        return addReportToMemory(reportData);
+        console.warn('No persistent database configured, trying Netlify Blobs');
+        try {
+          return await saveReportToBlobs(reportData);
+        } catch (blobError) {
+          console.warn('Netlify Blobs failed, falling back to memory:', blobError);
+          return addReportToMemory(reportData);
+        }
     }
   } catch (error) {
-    console.error('Persistent storage failed, falling back to memory:', error);
-    return addReportToMemory(reportData);
+    console.error('Persistent storage failed, trying Netlify Blobs fallback:', error);
+    try {
+      return await saveReportToBlobs(reportData);
+    } catch (blobError) {
+      console.error('All persistence methods failed, using memory:', blobError);
+      return addReportToMemory(reportData);
+    }
+  }
+}
+
+// Save to Netlify Blobs for persistence
+async function saveReportToBlobs(reportData) {
+  try {
+    const store = getStore('reports');
+    await store.set(reportData.companySlug, JSON.stringify(reportData));
+    console.log(`Report saved to Netlify Blobs: ${reportData.companySlug}`);
+    return reportData;
+  } catch (error) {
+    console.error('Netlify Blobs save error:', error);
+    throw error;
   }
 }
 
@@ -290,6 +314,9 @@ exports.handler = async (event, context) => {
   }
 
   try {
+    // Connect Lambda for Netlify Blobs compatibility
+    connectLambda(event);
+    
     const body = event.body;
     const signature = event.headers['x-hub-signature-256'] || event.headers['X-Hub-Signature-256'];
 
@@ -328,11 +355,28 @@ exports.handler = async (event, context) => {
     // Save the report with persistence
     await saveReportPersistent(reportData);
 
+    // Determine actual storage type used
+    let actualStorageType = 'memory';
+    if (DATABASE_TYPE) {
+      actualStorageType = DATABASE_TYPE;
+    } else {
+      // Check if blobs worked
+      try {
+        const store = getStore('reports');
+        const testRead = await store.get(reportData.companySlug);
+        if (testRead) {
+          actualStorageType = 'netlify-blobs';
+        }
+      } catch (e) {
+        actualStorageType = 'memory';
+      }
+    }
+
     console.log('Report saved successfully:', {
       id: reportData.id,
       company: reportData.companyName,
       slug: reportData.companySlug,
-      storageType: DATABASE_TYPE || 'memory'
+      storageType: actualStorageType
     });
 
     // Return success response
@@ -346,7 +390,7 @@ exports.handler = async (event, context) => {
           reportId: reportData.id,
           companySlug: reportData.companySlug,
           publishUrl: `https://possibleminds.in/reports/${reportData.companySlug}`,
-          storageType: DATABASE_TYPE || 'memory'
+          storageType: actualStorageType
         }
       })
     };
