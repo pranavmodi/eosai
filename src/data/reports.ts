@@ -30,6 +30,7 @@ export interface StrategicReport {
   tags: string[];
   readTime: string;
   markdownContent?: string;
+  isDynamic?: boolean;
   campaignData?: {
     contactId?: string;
     utmSource?: string;
