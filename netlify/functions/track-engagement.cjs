@@ -156,19 +156,13 @@ async function trackEngagementLocally(trackingData) {
       timestamp: trackingData.timestamp
     });
 
-    // Here you could add additional analytics integrations:
-    
-    // 1. Google Analytics 4
-    // await sendToGA4(trackingData);
-    
-    // 2. Mixpanel
-    // await sendToMixpanel(trackingData);
-    
-    // 3. Internal database
-    // await saveToDatabase(trackingData);
-    
-    // 4. Custom analytics service
-    // await sendToCustomAnalytics(trackingData);
+    // Send to analytics services
+    await Promise.all([
+      sendToGA4(trackingData),
+      sendToMixpanel(trackingData),
+      saveToDatabase(trackingData),
+      sendToCustomAnalytics(trackingData)
+    ]);
 
   } catch (error) {
     console.error('Error in local engagement tracking:', error);
@@ -176,12 +170,13 @@ async function trackEngagementLocally(trackingData) {
   }
 }
 
-// Example Google Analytics 4 integration (optional)
+// Google Analytics 4 integration (enhanced)
 async function sendToGA4(trackingData) {
   const GA4_MEASUREMENT_ID = process.env.GA4_MEASUREMENT_ID;
   const GA4_API_SECRET = process.env.GA4_API_SECRET;
   
   if (!GA4_MEASUREMENT_ID || !GA4_API_SECRET) {
+    console.log('GA4 not configured, skipping...');
     return; // Skip if not configured
   }
 
@@ -194,10 +189,17 @@ async function sendToGA4(trackingData) {
           event_category: 'strategic_reports',
           event_label: trackingData.report_id,
           engagement_type: trackingData.event_type,
-          utm_source: trackingData.utm_source,
-          utm_medium: trackingData.utm_medium,
-          utm_campaign: trackingData.utm_campaign,
-          value: trackingData.value
+          campaign_source: trackingData.utm_source,
+          campaign_medium: trackingData.utm_medium,
+          campaign_name: trackingData.utm_campaign,
+          campaign_content: trackingData.utm_content,
+          campaign_term: trackingData.utm_term,
+          target_element: trackingData.target,
+          engagement_value: trackingData.value,
+          user_ip: trackingData.ip_address,
+          page_referrer: trackingData.referrer,
+          engagement_time_msec: 100,
+          session_id: trackingData.session_data?.request_id
         }
       }]
     };
@@ -216,9 +218,95 @@ async function sendToGA4(trackingData) {
     if (response.ok) {
       console.log('Data sent to GA4 successfully');
     } else {
-      console.error('Failed to send data to GA4:', response.status);
+      console.error('Failed to send data to GA4:', response.status, await response.text());
     }
   } catch (error) {
     console.error('Error sending to GA4:', error);
+  }
+}
+
+// Mixpanel integration (optional)
+async function sendToMixpanel(trackingData) {
+  const MIXPANEL_TOKEN = process.env.MIXPANEL_TOKEN;
+  
+  if (!MIXPANEL_TOKEN) {
+    return; // Skip if not configured
+  }
+
+  try {
+    const mixpanelData = {
+      event: 'Report Engagement',
+      properties: {
+        distinct_id: trackingData.contact_id || 'anonymous',
+        report_id: trackingData.report_id,
+        engagement_type: trackingData.event_type,
+        utm_source: trackingData.utm_source,
+        utm_medium: trackingData.utm_medium,
+        utm_campaign: trackingData.utm_campaign,
+        target: trackingData.target,
+        value: trackingData.value,
+        ip: trackingData.ip_address,
+        referrer: trackingData.referrer,
+        user_agent: trackingData.user_agent,
+        timestamp: trackingData.timestamp,
+        token: MIXPANEL_TOKEN
+      }
+    };
+
+    const response = await fetch('https://api.mixpanel.com/track', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(mixpanelData)
+    });
+
+    if (response.ok) {
+      console.log('Data sent to Mixpanel successfully');
+    } else {
+      console.error('Failed to send data to Mixpanel:', response.status);
+    }
+  } catch (error) {
+    console.error('Error sending to Mixpanel:', error);
+  }
+}
+
+// Database storage (optional)
+async function saveToDatabase(trackingData) {
+  // This would integrate with your database of choice
+  // Examples: Supabase, Airtable, MongoDB, etc.
+  try {
+    // Placeholder for database integration
+    console.log('Database storage not configured, skipping...');
+  } catch (error) {
+    console.error('Error saving to database:', error);
+  }
+}
+
+// Custom analytics service (optional)
+async function sendToCustomAnalytics(trackingData) {
+  const CUSTOM_ANALYTICS_URL = process.env.CUSTOM_ANALYTICS_URL;
+  
+  if (!CUSTOM_ANALYTICS_URL) {
+    return; // Skip if not configured
+  }
+
+  try {
+    const response = await fetch(CUSTOM_ANALYTICS_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.CUSTOM_ANALYTICS_TOKEN || ''}`
+      },
+      body: JSON.stringify(trackingData)
+    });
+
+    if (response.ok) {
+      console.log('Data sent to custom analytics successfully');
+    } else {
+      console.error('Failed to send data to custom analytics:', response.status);
+    }
+  } catch (error) {
+    console.error('Error sending to custom analytics:', error);
   }
 } 
