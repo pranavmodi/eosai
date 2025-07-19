@@ -79,6 +79,7 @@ async function handleClickTracking(event, context, headers) {
       recipient: queryParams.recipient,
       campaign_id: queryParams.campaign_id,
       tracking_id: queryParams.tracking_id,
+      event_type: 'click',
       timestamp: queryParams.timestamp || new Date().toISOString(),
       click_timestamp: new Date().toISOString(),
       visitor_ip: event.headers['client-ip'] || 
