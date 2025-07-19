@@ -114,7 +114,7 @@ echo -e "   Optional: ANALYTICS_WEBHOOK_URL, MIXPANEL_TOKEN"
 echo -e "\n${YELLOW}Test 7: Function Logs${NC}"
 echo "To check function logs, run:"
 echo "   netlify functions:log click-tracking"
-echo "   netlify functions:log track-engagement"
+echo "   netlify functions:log click-tracking"
 
 echo -e "\n${GREEN}🎉 Click Tracking Test Complete!${NC}"
 echo -e "\n${YELLOW}Next Steps:${NC}"

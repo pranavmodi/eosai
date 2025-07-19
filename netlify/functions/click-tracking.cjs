@@ -151,13 +151,25 @@ async function handleDirectTracking(event, context, headers) {
   try {
     const trackingData = JSON.parse(event.body);
     
-    // Validate required fields
-    if (!trackingData.company_slug) {
+    // Handle different tracking data formats (engagement vs click tracking)
+    if (trackingData.reportId && trackingData.type) {
+      // This is engagement tracking from report pages - convert to our format
+      trackingData.company_slug = trackingData.reportId; // Use reportId as company_slug
+      trackingData.contact_id = trackingData.contactId;
+      trackingData.utm_source = trackingData.utmSource;
+      trackingData.utm_medium = trackingData.utmMedium;
+      trackingData.utm_campaign = trackingData.utmCampaign;
+      trackingData.event_type = trackingData.type;
+      trackingData.target = trackingData.action;
+    }
+    
+    // Validate required fields (flexible for both click and engagement tracking)
+    if (!trackingData.company_slug && !trackingData.reportId) {
       return {
         statusCode: 400,
         headers,
         body: JSON.stringify({ 
-          error: 'Missing required field: company_slug' 
+          error: 'Missing required field: company_slug or reportId' 
         })
       };
     }
@@ -212,10 +224,14 @@ async function sendToGA4(trackingData) {
   }
 
   try {
+    // Determine event type based on the data we received
+    const eventName = trackingData.event_type ? 'report_engagement' : 'report_click';
+    const clientId = trackingData.contact_id || trackingData.recipient || trackingData.tracking_id || 'anonymous';
+    
     const ga4Payload = {
-      client_id: trackingData.recipient || trackingData.tracking_id || 'anonymous',
+      client_id: clientId,
       events: [{
-        name: 'report_click',
+        name: eventName,
         params: {
           // Core event parameters
           event_category: 'strategic_reports',
@@ -231,13 +247,18 @@ async function sendToGA4(trackingData) {
           // Custom parameters (exactly as requested by user)
           campaign_id: trackingData.campaign_id || null,
           company_name: trackingData.company || null,
-          recipient_id: trackingData.recipient || null,
+          recipient_id: trackingData.recipient || trackingData.contact_id || null,
           
           // Additional tracking parameters
           tracking_id: trackingData.tracking_id || null,
           visitor_ip: trackingData.visitor_ip || null,
           referrer: trackingData.referrer || null,
           user_agent: trackingData.user_agent || null,
+          
+          // Engagement-specific parameters (for report_engagement events)
+          engagement_type: trackingData.event_type || null,
+          target_element: trackingData.target || null,
+          engagement_value: trackingData.value || null,
           
           // Session data
           engagement_time_msec: 100,
@@ -262,10 +283,11 @@ async function sendToGA4(trackingData) {
     ga4Payload.events[0].params = cleanParams;
 
     console.log('Sending to GA4:', {
-      event: 'report_click',
+      event: eventName,
       campaign_id: cleanParams.campaign_id,
       company_name: cleanParams.company_name,
       recipient_id: cleanParams.recipient_id,
+      engagement_type: cleanParams.engagement_type,
       client_id: ga4Payload.client_id
     });
 

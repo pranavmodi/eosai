@@ -58,10 +58,9 @@ CUSTOM_ANALYTICS_TOKEN=your_custom_token
 
 ### 3. Deploy the Functions
 
-The following functions are automatically deployed:
+The following function is automatically deployed:
 
-- `/.netlify/functions/click-tracking` - Main click tracking endpoint
-- `/.netlify/functions/track-engagement` - Enhanced engagement tracking
+- `/.netlify/functions/click-tracking` - Unified tracking endpoint (handles both clicks and engagement)
 
 ## 🚀 Usage
 
@@ -225,8 +224,9 @@ Modify the event names in the functions:
 // In click-tracking.cjs
 name: 'report_click'  // Change to your preference
 
-// In track-engagement.cjs
-name: 'report_engagement'  // Change to your preference
+// In click-tracking.cjs
+name: 'report_engagement'  // For engagement events
+name: 'report_click'       // For click events
 ```
 
 ### Additional Parameters

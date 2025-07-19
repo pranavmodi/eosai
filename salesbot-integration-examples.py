@@ -11,7 +11,7 @@ from urllib.parse import urlencode
 
 # Configuration
 POSSIBLEMINDS_PUBLISH_URL = "https://possibleminds.in/.netlify/functions/publish-report"
-POSSIBLEMINDS_TRACK_URL = "https://possibleminds.in/.netlify/functions/track-engagement"
+POSSIBLEMINDS_TRACK_URL = "https://possibleminds.in/.netlify/functions/click-tracking"
 WEBHOOK_SECRET = os.getenv("SALESBOT_WEBHOOK_SECRET", "your-webhook-secret-key")
 
 def generate_webhook_signature(payload, secret):

@@ -36,8 +36,8 @@ try {
 <Layout title={report.title} description={report.description}>
   <!-- Tracking Script -->
   <script define:vars={{ reportId: report.id, contactId, utmSource, utmMedium, utmCampaign }}>
-    // Track report view
-    fetch('/api/track-engagement', {
+    // Track report view using unified tracking system
+    fetch('/.netlify/functions/click-tracking', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -181,7 +181,7 @@ try {
   <!-- Engagement Tracking Script -->
   <script define:vars={{ reportIdForTracking: report.id }}>
     function trackEngagement(type, action) {
-      fetch('/api/track-engagement', {
+      fetch('/.netlify/functions/click-tracking', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

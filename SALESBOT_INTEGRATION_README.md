@@ -30,14 +30,14 @@ possibleminds.in/
 │   │   └── ReportLayout.astro            # McKinsey-style report layout
 │   ├── pages/
 │   │   ├── api/
-│   │   │   └── track-engagement.ts       # Engagement tracking API
+│   │   │   └── send-contact-email.ts     # Contact form API
 │   │   └── reports/
 │   │       ├── index.astro               # Reports listing page
 │   │       └── [companySlug].astro       # Dynamic report pages
 ├── netlify/
 │   └── functions/
 │       ├── publish-report.js             # Report publishing endpoint
-│       └── track-engagement.js           # Analytics tracking
+│       └── click-tracking.cjs            # Unified analytics tracking
 └── salesbot-integration-examples.py     # Flask integration code
 ```
 
@@ -193,7 +193,7 @@ curl -X POST https://possibleminds.in/.netlify/functions/publish-report \
 
 ```bash
 # Test engagement tracking
-curl -X POST https://possibleminds.in/api/track-engagement \
+curl -X POST https://possibleminds.in/.netlify/functions/click-tracking \
   -H "Content-Type: application/json" \
   -d '{
     "type": "view",
@@ -272,7 +272,7 @@ Modify `src/layouts/ReportLayout.astro` to customize:
 
 ### Enhanced Analytics
 
-Add integrations in `netlify/functions/track-engagement.js`:
+Add integrations in `netlify/functions/click-tracking.cjs`:
 - Google Analytics 4
 - Mixpanel
 - Custom dashboards
