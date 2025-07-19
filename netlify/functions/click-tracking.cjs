@@ -9,6 +9,9 @@ const GA4_MEASUREMENT_ID = process.env.GA4_MEASUREMENT_ID;
 const GA4_API_SECRET = process.env.GA4_API_SECRET;
 const WEBHOOK_URL = process.env.ANALYTICS_WEBHOOK_URL;
 const WEBHOOK_SECRET = process.env.ANALYTICS_WEBHOOK_SECRET;
+// NEW: Salesbot-specific environment variables
+const SALESBOT_URL = process.env.SALESBOT_URL || 'https://your-salesbot-domain.com';
+const SALESBOT_API_KEY = process.env.SALESBOT_API_KEY;
 
 // Main function handler
 exports.handler = async (event, context) => {
@@ -106,6 +109,7 @@ async function handleClickTracking(event, context, headers) {
     await Promise.all([
       sendToGA4(trackingData),
       sendToWebhook(trackingData),
+      sendToSalesbot(trackingData), // NEW: Add salesbot tracking
       storeClickData(trackingData, event)
     ]);
 
@@ -172,6 +176,7 @@ async function handleDirectTracking(event, context, headers) {
     await Promise.all([
       sendToGA4(trackingData),
       sendToWebhook(trackingData),
+      sendToSalesbot(trackingData), // NEW: Add salesbot tracking
       storeClickData(trackingData, event)
     ]);
 
@@ -212,24 +217,57 @@ async function sendToGA4(trackingData) {
       events: [{
         name: 'report_click',
         params: {
+          // Core event parameters
           event_category: 'strategic_reports',
           event_label: trackingData.company_slug,
-          campaign_source: trackingData.utm_source,
-          campaign_medium: trackingData.utm_medium,
-          campaign_name: trackingData.utm_campaign,
-          campaign_content: trackingData.utm_content,
-          campaign_term: trackingData.utm_term,
-          company_name: trackingData.company,
-          recipient_id: trackingData.recipient,
-          campaign_id: trackingData.campaign_id,
-          tracking_id: trackingData.tracking_id,
-          custom_parameter_1: trackingData.visitor_ip,
-          custom_parameter_2: trackingData.referrer,
+          
+          // Campaign parameters (standard GA4 naming)
+          campaign_source: trackingData.utm_source || null,
+          campaign_medium: trackingData.utm_medium || null,
+          campaign_name: trackingData.utm_campaign || null,
+          campaign_content: trackingData.utm_content || null,
+          campaign_term: trackingData.utm_term || null,
+          
+          // Custom parameters (exactly as requested by user)
+          campaign_id: trackingData.campaign_id || null,
+          company_name: trackingData.company || null,
+          recipient_id: trackingData.recipient || null,
+          
+          // Additional tracking parameters
+          tracking_id: trackingData.tracking_id || null,
+          visitor_ip: trackingData.visitor_ip || null,
+          referrer: trackingData.referrer || null,
+          user_agent: trackingData.user_agent || null,
+          
+          // Session data
           engagement_time_msec: 100,
-          session_id: trackingData.request_id
+          session_id: trackingData.request_id || null,
+          
+          // Geographic data (if available)
+          country: trackingData.session_data?.cloudfront_viewer_country || null,
+          region: trackingData.session_data?.cloudfront_viewer_country_region || null,
+          city: trackingData.session_data?.cloudfront_viewer_city || null
         }
       }]
     };
+
+    // Remove null values to ensure clean GA4 data
+    const cleanParams = {};
+    Object.keys(ga4Payload.events[0].params).forEach(key => {
+      const value = ga4Payload.events[0].params[key];
+      if (value !== null && value !== undefined && value !== '') {
+        cleanParams[key] = value;
+      }
+    });
+    ga4Payload.events[0].params = cleanParams;
+
+    console.log('Sending to GA4:', {
+      event: 'report_click',
+      campaign_id: cleanParams.campaign_id,
+      company_name: cleanParams.company_name,
+      recipient_id: cleanParams.recipient_id,
+      client_id: ga4Payload.client_id
+    });
 
     const response = await fetch(
       `https://www.google-analytics.com/mp/collect?measurement_id=${GA4_MEASUREMENT_ID}&api_secret=${GA4_API_SECRET}`,
@@ -296,6 +334,42 @@ async function sendToWebhook(trackingData) {
 
   } catch (error) {
     console.error('Error sending webhook:', error);
+  }
+}
+
+// Send tracking data to Salesbot (for real-time notifications)
+async function sendToSalesbot(trackingData) {
+  if (!SALESBOT_URL || !SALESBOT_API_KEY) {
+    console.log('Salesbot not configured, skipping...');
+    return;
+  }
+
+  try {
+    const salesbotPayload = {
+      event: 'report_click',
+      data: trackingData,
+      timestamp: new Date().toISOString()
+    };
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'X-API-Key': SALESBOT_API_KEY
+    };
+
+    const response = await fetch(`${SALESBOT_URL}/api/v1/events`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(salesbotPayload)
+    });
+
+    if (response.ok) {
+      console.log('Salesbot notification sent successfully');
+    } else {
+      console.error('Salesbot notification failed:', response.status, await response.text());
+    }
+
+  } catch (error) {
+    console.error('Error sending salesbot:', error);
   }
 }
 
