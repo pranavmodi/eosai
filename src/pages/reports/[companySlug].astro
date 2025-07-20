@@ -4,6 +4,18 @@ import ReportLayout from '../../layouts/ReportLayout.astro';
 // Get the company slug from the URL params
 const { companySlug } = Astro.params;
 
+// Extract URL parameters for tracking
+const url = new URL(Astro.request.url);
+const utmSource = url.searchParams.get('utm_source');
+const utmMedium = url.searchParams.get('utm_medium');
+const utmCampaign = url.searchParams.get('utm_campaign');
+const utmContent = url.searchParams.get('utm_content');
+const utmTerm = url.searchParams.get('utm_term');
+const company = url.searchParams.get('company');
+const recipient = url.searchParams.get('recipient');
+const campaignId = url.searchParams.get('campaign_id');
+const trackingId = url.searchParams.get('tracking_id');
+
 // Fetch report from our local Netlify function
 async function fetchReportFromLocalAPI(slug: string) {
   try {

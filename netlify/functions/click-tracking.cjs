@@ -57,6 +57,9 @@ async function handleClickTracking(event, context, headers) {
     const queryParams = event.queryStringParameters || {};
     const companySlug = queryParams.slug || queryParams.company_id;
     
+    // Debug: Log all query parameters
+    console.log('All query parameters:', queryParams);
+    
     if (!companySlug) {
       return {
         statusCode: 400,
