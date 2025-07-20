@@ -226,7 +226,7 @@ async function sendToGA4(trackingData) {
 
   try {
     // Determine event type based on the data we received
-    const eventName = trackingData.event_type ? 'report_engagement' : 'report_click';
+    const eventName = trackingData.event_type === 'click' ? 'report_click' : 'report_engagement';
     const clientId = trackingData.contact_id || trackingData.recipient || trackingData.tracking_id || 'anonymous';
     
     const ga4Payload = {
@@ -283,6 +283,14 @@ async function sendToGA4(trackingData) {
     });
     ga4Payload.events[0].params = cleanParams;
 
+    // Debug logging to troubleshoot empty values
+    console.log('Original tracking data:', {
+      campaign_id: trackingData.campaign_id,
+      company: trackingData.company,
+      recipient: trackingData.recipient,
+      event_type: trackingData.event_type
+    });
+    
     console.log('Sending to GA4:', {
       event: eventName,
       campaign_id: cleanParams.campaign_id,
