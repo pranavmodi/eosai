@@ -248,10 +248,10 @@ async function sendToGA4(trackingData) {
           campaign_content: trackingData.utm_content || null,
           campaign_term: trackingData.utm_term || null,
           
-          // Custom parameters (exactly as requested by user)
-          campaign_id: trackingData.campaign_id || null,
-          company_name: trackingData.company || null,
-          recipient_id: trackingData.recipient || trackingData.contact_id || null,
+          // Custom parameters (prefixed to avoid conflicts)
+          custom_campaign_id: trackingData.campaign_id || null,
+          custom_company_name: trackingData.company || null,
+          custom_recipient_id: trackingData.recipient || trackingData.contact_id || null,
           
           // Additional tracking parameters
           tracking_id: trackingData.tracking_id || null,
@@ -296,9 +296,9 @@ async function sendToGA4(trackingData) {
     
     console.log('Sending to GA4:', {
       event: eventName,
-      campaign_id: cleanParams.campaign_id,
-      company_name: cleanParams.company_name,
-      recipient_id: cleanParams.recipient_id,
+      custom_campaign_id: cleanParams.custom_campaign_id,
+      custom_company_name: cleanParams.custom_company_name,
+      custom_recipient_id: cleanParams.custom_recipient_id,
       engagement_type: cleanParams.engagement_type,
       client_id: ga4Payload.client_id
     });
