@@ -412,17 +412,23 @@ async function storeClickData(trackingData, event) {
   try {
     connectLambda(event);
     const store = getStore('click-analytics');
-    const clickId = `${trackingData.company_slug}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
-    await store.set(clickId, JSON.stringify(trackingData), {
+    // Use campaign_id as the prefix for the blob key.
+    // Fallback to 'unknown' if campaign_id is not available.
+    const campaignId = trackingData.campaign_id || 'unknown';
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const blobKey = `${campaignId}/${uniqueId}`;
+    
+    await store.set(blobKey, JSON.stringify(trackingData), {
       metadata: { 
         contentType: 'application/json',
         company: trackingData.company_slug,
+        campaign_id: campaignId, // Add campaign_id to metadata for potential future use
         timestamp: trackingData.click_timestamp
       }
     });
 
-    console.log('Click data stored successfully:', clickId);
+    console.log('Click data stored successfully with key:', blobKey);
 
   } catch (error) {
     console.error('Error storing click data:', error);
