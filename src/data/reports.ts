@@ -14,8 +14,8 @@ export interface StrategicReport {
     title: string;
   };
   executiveSummary: string;
-  keyFindings: string[];
-  recommendations: string[];
+  strategicImperatives: string[];
+  agentRecommendations: string[];
   marketAnalysis: string;
   competitivePosition: string;
   riskAssessment: string;

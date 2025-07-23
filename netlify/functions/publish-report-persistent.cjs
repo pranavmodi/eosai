@@ -251,17 +251,17 @@ function processReportData(salesbotData) {
       title: "Principal Strategy Consultant"
     },
     executiveSummary: "Comprehensive strategic analysis reveals significant opportunities for growth and operational optimization.",
-    keyFindings: [
-      "Strategic opportunity identified in core business segments",
-      "Competitive positioning analysis completed",
-      "Growth potential assessment finalized",
-      "Risk mitigation strategies developed"
+    strategicImperatives: [
+      "Digital transformation acceleration",
+      "Market expansion strategy execution",
+      "Operational excellence implementation",
+      "Customer experience optimization"
     ],
-    recommendations: [
-      "Implement strategic initiatives in Q1",
-      "Optimize operational efficiency metrics",
-      "Develop competitive advantage framework",
-      "Execute risk management protocols"
+    agentRecommendations: [
+      "Leverage AI-driven analytics for decision making",
+      "Implement automated workflow optimization",
+      "Deploy predictive market analysis systems",
+      "Establish real-time performance monitoring"
     ],
     marketAnalysis: "Market analysis indicates strong potential for strategic positioning and competitive advantage development.",
     competitivePosition: "Current market position offers significant opportunities for strategic advancement.",

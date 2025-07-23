@@ -1,12 +1,82 @@
 ---
 import Layout from './Layout.astro';
 import type { StrategicReport } from '../data/reports';
+import { marked } from 'marked';
 
 interface Props {
   report: StrategicReport;
 }
 
 const { report } = Astro.props;
+
+// Configure marked for professional rendering
+marked.setOptions({
+  breaks: true,
+  gfm: true,
+  headerIds: true,
+  headerPrefix: 'section-'
+});
+
+// Parse structured content from markdown
+function parseReportSections(markdown: string) {
+  if (!markdown) return { sections: [], rawContent: '' };
+  
+  const sections = [];
+  const lines = markdown.split('\n');
+  let currentSection = null;
+  let currentContent = [];
+  
+  for (const line of lines) {
+    if (line.startsWith('# ')) {
+      // Save previous section
+      if (currentSection) {
+        sections.push({
+          ...currentSection,
+          content: currentContent.join('\n').trim(),
+          html: marked(currentContent.join('\n').trim())
+        });
+      }
+      // Start new section
+      currentSection = {
+        title: line.replace('# ', ''),
+        level: 1,
+        id: line.replace('# ', '').toLowerCase().replace(/[^a-z0-9]+/g, '-')
+      };
+      currentContent = [];
+    } else if (line.startsWith('## ')) {
+      // Save previous section
+      if (currentSection) {
+        sections.push({
+          ...currentSection,
+          content: currentContent.join('\n').trim(),
+          html: marked(currentContent.join('\n').trim())
+        });
+      }
+      // Start new section
+      currentSection = {
+        title: line.replace('## ', ''),
+        level: 2,
+        id: line.replace('## ', '').toLowerCase().replace(/[^a-z0-9]+/g, '-')
+      };
+      currentContent = [];
+    } else {
+      currentContent.push(line);
+    }
+  }
+  
+  // Save last section
+  if (currentSection) {
+    sections.push({
+      ...currentSection,
+      content: currentContent.join('\n').trim(),
+      html: marked(currentContent.join('\n').trim())
+    });
+  }
+  
+  return { sections, rawContent: markdown };
+}
+
+const { sections } = parseReportSections(report.markdownContent || '');
 const formattedDate = new Date(report.publishedDate).toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'long',
@@ -54,6 +124,37 @@ try {
   </script>
 
   <article class="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <!-- Table of Contents - Fixed Sidebar -->
+    <div id="toc-sidebar" class="fixed left-0 top-0 h-full w-64 bg-white shadow-lg transform -translate-x-full transition-transform duration-300 z-40 no-print">
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-bold text-gray-900">Contents</h3>
+          <button onclick="toggleTOC()" class="text-gray-500 hover:text-gray-700">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        <nav class="space-y-3">
+          <a href="#executive-summary" class="toc-link block text-sm text-gray-600 hover:text-blue-600 py-2 px-3 rounded hover:bg-blue-50 transition-colors" onclick="scrollToSection('executive-summary')">Executive Summary</a>
+          <a href="#strategic-imperatives" class="toc-link block text-sm text-gray-600 hover:text-purple-600 py-2 px-3 rounded hover:bg-purple-50 transition-colors" onclick="scrollToSection('strategic-imperatives')">Strategic Imperatives</a>
+          <a href="#agent-recommendations" class="toc-link block text-sm text-gray-600 hover:text-orange-600 py-2 px-3 rounded hover:bg-orange-50 transition-colors" onclick="scrollToSection('agent-recommendations')">AI Agent Recommendations</a>
+          <a href="#report-content" class="toc-link block text-sm text-gray-600 hover:text-gray-900 py-2 px-3 rounded hover:bg-gray-50 transition-colors" onclick="scrollToSection('report-content')">Report Content</a>
+          <a href="#metadata" class="toc-link block text-sm text-gray-600 hover:text-gray-900 py-2 px-3 rounded hover:bg-gray-50 transition-colors" onclick="scrollToSection('metadata')">Report Metadata</a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Overlay for mobile -->
+    <div id="toc-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden no-print" onclick="toggleTOC()"></div>
+
+    <!-- TOC Toggle Button -->
+    <button onclick="toggleTOC()" class="fixed top-6 left-6 z-50 bg-white shadow-lg rounded-full p-3 hover:shadow-xl transition-shadow no-print">
+      <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
+
     <!-- Executive Header -->
     <div class="bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 text-white">
       <div class="max-w-4xl mx-auto px-4 py-16">
@@ -73,18 +174,15 @@ try {
         </p>
         <div class="flex flex-wrap items-center gap-6 text-sm">
           <div class="flex items-center gap-3">
-            <img 
-              src={report.author.avatar} 
-              alt={report.author.name}
-              class="w-12 h-12 rounded-full border-2 border-white/20"
-            />
-            <div>
-              <div class="font-medium">{report.author.name}</div>
-              <div class="text-blue-200">{report.author.title}</div>
+            <div class="w-12 h-12 rounded-full border-2 border-white/20 bg-blue-600 flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
             </div>
-          </div>
-          <div class="text-blue-200">
-            Published {formattedDate}
+            <div>
+              <div class="font-medium">Possible Minds AI Agent</div>
+              <div class="text-blue-200">Published {formattedDate}</div>
+            </div>
           </div>
           <div class="text-blue-200">
             {report.readTime} read
@@ -93,36 +191,183 @@ try {
       </div>
     </div>
 
-    <!-- Raw Content View -->
-    <div class="max-w-4xl mx-auto px-4 py-12">
-      <div class="bg-gray-900 text-green-400 p-6 rounded-lg shadow-lg mb-6">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-bold text-white flex items-center">
-            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+    <!-- Executive Summary Cards -->
+    <div id="executive-summary" class="max-w-6xl mx-auto px-4 pt-12">
+
+      <!-- Executive Summary Content -->
+      {report.executiveSummary && (
+        <div class="bg-gradient-to-br from-blue-50 via-white to-indigo-50 rounded-2xl shadow-lg border border-blue-100 overflow-hidden mb-8">
+          <!-- Header with gradient -->
+          <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-white ml-4">Executive Summary</h2>
+              </div>
+              <button onclick="toggleSection('executive-summary-content')" class="text-white/70 hover:text-white no-print">
+                <svg class="w-5 h-5 transform transition-transform" id="executive-summary-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Content area -->
+          <div id="executive-summary-content" class="p-8">
+            <!-- Key highlights bar -->
+            <div class="flex items-center mb-6 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+              <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-4">
+                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-blue-900 mb-1">Strategic Analysis Complete</p>
+                <p class="text-sm text-blue-700">Comprehensive assessment of market opportunities and growth potential</p>
+              </div>
+            </div>
+            
+            <!-- Main content -->
+            <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+              <div class="text-lg font-medium text-gray-900 mb-4 pb-4 border-b border-gray-200">
+                Strategic Overview
+              </div>
+              <p class="text-gray-700 leading-relaxed mb-6">
+                {report.executiveSummary}
+              </p>
+              
+              <!-- Report details if available -->
+              {report.markdownContent && report.markdownContent.includes('Deep Research Analysis') && (
+                <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                  <h4 class="font-semibold text-gray-900 mb-2">Report Details</h4>
+                  <div class="text-sm text-gray-600 space-y-1">
+                    <p><strong>Analysis Type:</strong> Deep Research Analysis</p>
+                    <p><strong>Focus Area:</strong> Market Integration Strategy</p>
+                    <p><strong>Generated:</strong> {new Date(report.generatedDate || report.publishedDate).toLocaleDateString('en-US', { 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+
+    <!-- Strategic Imperatives -->
+    {report.strategicImperatives && report.strategicImperatives.length > 0 && (
+      <div id="strategic-imperatives" class="max-w-4xl mx-auto px-4 mb-8">
+        <div class="bg-gradient-to-r from-purple-50 to-violet-50 rounded-2xl p-8 border border-purple-100">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center">
+              <div class="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.031 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                </svg>
+              </div>
+              <h2 class="text-2xl font-bold text-gray-900 ml-4">Strategic Imperatives</h2>
+            </div>
+            <button onclick="toggleSection('strategic-imperatives-content')" class="text-gray-400 hover:text-gray-600 no-print">
+              <svg class="w-5 h-5 transform transition-transform" id="strategic-imperatives-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+          </div>
+          <div id="strategic-imperatives-content" class="space-y-4">
+            {report.strategicImperatives.map((imperative, index) => (
+              <div class="flex items-start">
+                <div class="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold mt-1">
+                  {index + 1}
+                </div>
+                <div class="ml-4 text-gray-700 leading-relaxed">
+                  {imperative}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )}
+
+    <!-- Agent Recommendations -->
+    {report.agentRecommendations && report.agentRecommendations.length > 0 && (
+      <div id="agent-recommendations" class="max-w-4xl mx-auto px-4 mb-8">
+        <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-8 border border-orange-100">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center">
+              <div class="w-12 h-12 bg-orange-600 rounded-full flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+              </div>
+              <h2 class="text-2xl font-bold text-gray-900 ml-4">AI Agent Recommendations</h2>
+            </div>
+            <button onclick="toggleSection('agent-recommendations-content')" class="text-gray-400 hover:text-gray-600 no-print">
+              <svg class="w-5 h-5 transform transition-transform" id="agent-recommendations-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+          </div>
+          <div id="agent-recommendations-content" class="space-y-4">
+            {report.agentRecommendations.map((recommendation, index) => (
+              <div class="flex items-start">
+                <div class="flex-shrink-0 w-8 h-8 bg-orange-600 text-white rounded-full flex items-center justify-center text-sm font-bold mt-1">
+                  {index + 1}
+                </div>
+                <div class="ml-4 text-gray-700 leading-relaxed">
+                  {recommendation}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )}
+
+    <!-- Report Content Sections -->
+    <div id="report-content" class="max-w-4xl mx-auto px-4 mb-8">
+      {sections.length > 0 ? (
+        <div class="space-y-8">
+          {sections.map((section) => (
+            <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
+                <h3 class={`font-bold text-gray-900 ${
+                  section.level === 1 ? 'text-2xl' : 'text-xl'
+                }`} id={section.id}>
+                  {section.title}
+                </h3>
+              </div>
+              <div class="p-6">
+                <div class="prose prose-lg max-w-none text-gray-700" set:html={section.html}></div>
+              </div>
+            </section>
+          ))}
+        </div>
+      ) : (
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
+          <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>
-            Raw Markdown Content
-          </h2>
-          <button 
-            onclick="navigator.clipboard.writeText(document.getElementById('raw-content').textContent).then(() => alert('Content copied to clipboard!'))"
-            class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
-          >
-            Copy
-          </button>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Report Content</h3>
+          <p class="text-gray-600 mb-4">This report is being processed for optimal presentation.</p>
+          <div class="prose max-w-none text-gray-700" set:html={marked(report.markdownContent || 'No content available.')}></div>
         </div>
-        <div class="text-gray-300 text-sm mb-4">
-          Company: <span class="text-white">{report.companyName}</span> | 
-          Report ID: <span class="text-white">{report.id}</span> | 
-          Slug: <span class="text-white">{report.companySlug}</span>
-        </div>
-      </div>
-      
-      <div class="bg-gray-50 border border-gray-200 rounded-lg p-6">
-        <pre id="raw-content" class="whitespace-pre-wrap text-sm font-mono text-gray-800 leading-relaxed overflow-x-auto">{report.markdownContent || 'No raw markdown content available for this report.'}</pre>
-      </div>
+      )}
+    </div>
       
       <!-- Report Metadata -->
-      <div class="mt-8 bg-white border border-gray-200 rounded-lg p-6">
+      <div id="metadata" class="mt-8 bg-white border border-gray-200 rounded-lg p-6">
         <h3 class="text-lg font-bold text-gray-900 mb-4">Report Metadata</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div><strong>Company:</strong> {report.companyName}</div>
@@ -178,7 +423,7 @@ try {
     </div>
   </article>
 
-  <!-- Engagement Tracking Script -->
+  <!-- Navigation and Interaction Scripts -->
   <script define:vars={{ reportIdForTracking: report.id }}>
     function trackEngagement(type, action) {
       fetch('/.netlify/functions/click-tracking', {
@@ -192,16 +437,269 @@ try {
         })
       }).catch(err => console.log('Engagement tracking failed:', err));
     }
+
+    // Table of Contents Toggle
+    function toggleTOC() {
+      const sidebar = document.getElementById('toc-sidebar');
+      const overlay = document.getElementById('toc-overlay');
+      
+      if (sidebar.classList.contains('-translate-x-full')) {
+        sidebar.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+      }
+    }
+
+    // Smooth scroll to section
+    function scrollToSection(sectionId) {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        toggleTOC(); // Close TOC after navigation
+      }
+    }
+
+    // Toggle collapsible sections
+    function toggleSection(contentId) {
+      const content = document.getElementById(contentId);
+      const icon = document.getElementById(contentId.replace('-content', '-icon'));
+      
+      if (content && icon) {
+        if (content.style.display === 'none') {
+          content.style.display = 'block';
+          icon.style.transform = 'rotate(0deg)';
+        } else {
+          content.style.display = 'none';
+          icon.style.transform = 'rotate(-90deg)';
+        }
+      }
+    }
+
+    // Highlight active TOC link based on scroll position
+    function updateActiveTOCLink() {
+      const sections = ['executive-summary', 'strategic-imperatives', 'agent-recommendations', 'report-content', 'metadata'];
+      const tocLinks = document.querySelectorAll('.toc-link');
+      
+      let activeSection = '';
+      sections.forEach(sectionId => {
+        const section = document.getElementById(sectionId);
+        if (section) {
+          const rect = section.getBoundingClientRect();
+          if (rect.top <= 100 && rect.bottom >= 100) {
+            activeSection = sectionId;
+          }
+        }
+      });
+
+      tocLinks.forEach(link => {
+        link.classList.remove('bg-blue-50', 'text-blue-600', 'font-medium');
+        if (link.getAttribute('href') === '#' + activeSection) {
+          link.classList.add('bg-blue-50', 'text-blue-600', 'font-medium');
+        }
+      });
+    }
+
+    // Initialize page functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add scroll listener for TOC highlighting
+      window.addEventListener('scroll', updateActiveTOCLink);
+      
+      // Close TOC when clicking outside
+      document.addEventListener('click', function(e) {
+        const sidebar = document.getElementById('toc-sidebar');
+        const toggle = e.target.closest('button[onclick="toggleTOC()"]');
+        if (!sidebar.contains(e.target) && !toggle && !sidebar.classList.contains('-translate-x-full')) {
+          toggleTOC();
+        }
+      });
+      
+      // Initial TOC highlight
+      updateActiveTOCLink();
+    });
   </script>
 
-  <!-- Print Styles -->
+  <!-- Custom Styles for Professional Typography -->
   <style>
+    .prose {
+      color: #374151;
+      line-height: 1.7;
+    }
+    
+    .prose h1 {
+      color: #111827;
+      font-weight: 800;
+      font-size: 2.25rem;
+      margin-top: 0;
+      margin-bottom: 2rem;
+      line-height: 1.2;
+    }
+    
+    .prose h2 {
+      color: #111827;
+      font-weight: 700;
+      font-size: 1.875rem;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+    
+    .prose h3 {
+      color: #111827;
+      font-weight: 600;
+      font-size: 1.5rem;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      line-height: 1.4;
+    }
+    
+    .prose p {
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .prose ul, .prose ol {
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      padding-left: 1.625rem;
+    }
+    
+    .prose li {
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .prose blockquote {
+      font-style: italic;
+      border-left: 4px solid #3B82F6;
+      padding-left: 1rem;
+      margin: 1.5rem 0;
+      color: #4B5563;
+      background: #F8FAFC;
+      padding: 1rem;
+      border-radius: 0.5rem;
+    }
+    
+    .prose strong {
+      color: #111827;
+      font-weight: 600;
+    }
+    
+    .prose code {
+      color: #DC2626;
+      background: #FEF2F2;
+      padding: 0.125rem 0.25rem;
+      border-radius: 0.25rem;
+      font-size: 0.875em;
+    }
+    
+    .prose pre {
+      background: #1F2937;
+      color: #F9FAFB;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    
+    .prose pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+    }
+    
+    .prose table {
+      width: 100%;
+      margin: 1.5rem 0;
+      border-collapse: collapse;
+    }
+    
+    .prose th, .prose td {
+      border: 1px solid #E5E7EB;
+      padding: 0.75rem;
+      text-align: left;
+    }
+    
+    .prose th {
+      background: #F9FAFB;
+      font-weight: 600;
+    }
+    
     @media print {
+      /* Hide interactive elements */
       .no-print { display: none !important; }
+      
+      /* Reset backgrounds and colors for print */
       body { background: white !important; }
-      .bg-gradient-to-r, .bg-gradient-to-br { background: white !important; color: black !important; }
+      .bg-gradient-to-r, .bg-gradient-to-br, .bg-gradient-to-b { 
+        background: white !important; 
+        color: black !important; 
+      }
       .text-white { color: black !important; }
-      .border { border: 1px solid #ccc !important; }
+      .text-blue-100, .text-blue-200 { color: #374151 !important; }
+      
+      /* Optimize layout for print */
+      .max-w-4xl, .max-w-6xl { max-width: 100% !important; }
+      .px-4 { padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+      
+      /* Executive header adjustments */
+      .bg-gradient-to-r.from-slate-900 {
+        background: #f8fafc !important;
+        color: black !important;
+        border-bottom: 2px solid #e2e8f0 !important;
+      }
+      
+      /* Cards and sections */
+      .bg-white, .bg-gray-50, .bg-blue-50, .bg-purple-50, .bg-orange-50 {
+        background: white !important;
+        border: 1px solid #d1d5db !important;
+      }
+      
+      .shadow-lg, .shadow-sm, .shadow-xl {
+        box-shadow: none !important;
+        border: 1px solid #d1d5db !important;
+      }
+      
+      /* Typography improvements for print */
+      .prose h1, .prose h2, .prose h3 {
+        page-break-after: avoid;
+      }
+      
+      .prose p, .prose li {
+        orphans: 3;
+        widows: 3;
+      }
+      
+      /* Section breaks */
+      #strategic-imperatives,
+      #agent-recommendations,
+      #report-content {
+        page-break-before: avoid;
+        page-break-inside: avoid;
+      }
+      
+      /* Ensure content is expanded for print */
+      [id$='-content'] {
+        display: block !important;
+      }
+      
+      /* Adjust spacing for print */
+      .mb-8 { margin-bottom: 1rem !important; }
+      .p-8 { padding: 1rem !important; }
+      .p-6 { padding: 0.75rem !important; }
+      
+      /* Grid adjustments */
+      .grid-cols-3 {
+        grid-template-columns: repeat(3, 1fr) !important;
+      }
+      
+      /* Footer and metadata */
+      #metadata {
+        page-break-before: avoid;
+        border-top: 2px solid #374151 !important;
+        margin-top: 2rem !important;
+      }
     }
   </style>
 </Layout> 
