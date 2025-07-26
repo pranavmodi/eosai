@@ -92,7 +92,7 @@ try {
           </div>
         </div>
         <h1 class="text-5xl md:text-6xl font-light text-gray-900 mb-6 leading-tight tracking-tight">
-          {report.title}
+          {report.companyName}
         </h1>
         <p class="text-xl text-gray-600 mb-10 leading-relaxed max-w-4xl font-light">
           {report.subtitle}
@@ -115,8 +115,8 @@ try {
     <!-- Report Content -->
     <div id="report-content" class="max-w-7xl mx-auto px-6 mb-8">
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="p-6">
-          <div class="prose prose-lg max-w-none text-gray-700" set:html={report.htmlContent}></div>
+        <div class="p-8">
+          <div class="prose prose-lg w-full max-w-none text-gray-700" set:html={report.htmlContent}></div>
         </div>
       </div>
     </div>
