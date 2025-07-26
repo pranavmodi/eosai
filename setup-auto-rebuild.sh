@@ -104,7 +104,7 @@ echo -e "${YELLOW}🧪 Testing automatic rebuild...${NC}"
 # Test the system
 TEST_PAYLOAD='{
   "company_name": "Auto-Rebuild Test Company",
-  "markdown_report": "# Auto-Rebuild Test Report\n\n## Overview\nThis report was created to test the automatic rebuild system.\n\n## Test Details\n- Created: '$(date)'\n- Purpose: Verify automatic rebuilds work\n- Expected: Report available in 2-4 minutes\n\n## Results\nIf you can read this report on the website, the automatic rebuild system is working perfectly!",
+  "html_report": "<h1>Auto-Rebuild Test Report</h1><h2>Overview</h2><p>This report was created to test the automatic rebuild system.</p><h2>Test Details</h2><ul><li>Created: '$(date)'</li><li>Purpose: Verify automatic rebuilds work</li><li>Expected: Report available in 2-4 minutes</li></ul><h2>Results</h2><p>If you can read this report on the website, the automatic rebuild system is working perfectly!</p>",
   "company_website": "https://test-auto-rebuild.com"
 }'
 

@@ -249,7 +249,7 @@ curl -X POST https://possibleminds.in/.netlify/functions/publish-report \
   -H "Content-Type: application/json" \
   -d '{
     "company_name": "Test Cleanup Company",
-    "markdown_report": "# Test Report\n\nThis report will be cleaned up.",
+    "html_report": "<h1>Test Report</h1><p>This report will be cleaned up.</p>",
     "company_website": "https://test.com"
   }'
 ```

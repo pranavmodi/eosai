@@ -29,7 +29,8 @@ export interface StrategicReport {
   };
   tags: string[];
   readTime: string;
-  markdownContent?: string;
+  htmlContent?: string;
+  pdfReportBase64?: string;
   isDynamic?: boolean;
   campaignData?: {
     contactId?: string;

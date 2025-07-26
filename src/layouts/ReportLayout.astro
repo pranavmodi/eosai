@@ -1,7 +1,6 @@
 ---
 import Layout from './Layout.astro';
 import type { StrategicReport } from '../data/reports';
-import { marked } from 'marked';
 
 interface Props {
   report: StrategicReport;
@@ -9,74 +8,6 @@ interface Props {
 
 const { report } = Astro.props;
 
-// Configure marked for professional rendering
-marked.setOptions({
-  breaks: true,
-  gfm: true,
-  headerIds: true,
-  headerPrefix: 'section-'
-});
-
-// Parse structured content from markdown
-function parseReportSections(markdown: string) {
-  if (!markdown) return { sections: [], rawContent: '' };
-  
-  const sections = [];
-  const lines = markdown.split('\n');
-  let currentSection = null;
-  let currentContent = [];
-  
-  for (const line of lines) {
-    if (line.startsWith('# ')) {
-      // Save previous section
-      if (currentSection) {
-        sections.push({
-          ...currentSection,
-          content: currentContent.join('\n').trim(),
-          html: marked(currentContent.join('\n').trim())
-        });
-      }
-      // Start new section
-      currentSection = {
-        title: line.replace('# ', ''),
-        level: 1,
-        id: line.replace('# ', '').toLowerCase().replace(/[^a-z0-9]+/g, '-')
-      };
-      currentContent = [];
-    } else if (line.startsWith('## ')) {
-      // Save previous section
-      if (currentSection) {
-        sections.push({
-          ...currentSection,
-          content: currentContent.join('\n').trim(),
-          html: marked(currentContent.join('\n').trim())
-        });
-      }
-      // Start new section
-      currentSection = {
-        title: line.replace('## ', ''),
-        level: 2,
-        id: line.replace('## ', '').toLowerCase().replace(/[^a-z0-9]+/g, '-')
-      };
-      currentContent = [];
-    } else {
-      currentContent.push(line);
-    }
-  }
-  
-  // Save last section
-  if (currentSection) {
-    sections.push({
-      ...currentSection,
-      content: currentContent.join('\n').trim(),
-      html: marked(currentContent.join('\n').trim())
-    });
-  }
-  
-  return { sections, rawContent: markdown };
-}
-
-const { sections } = parseReportSections(report.markdownContent || '');
 const formattedDate = new Date(report.publishedDate).toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'long',
@@ -265,37 +196,13 @@ try {
       </div>
     )}
 
-    <!-- Report Content Sections -->
+    <!-- Report Content -->
     <div id="report-content" class="max-w-4xl mx-auto px-4 mb-8">
-      {sections.length > 0 ? (
-        <div class="space-y-8">
-          {sections.map((section) => (
-            <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-              <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
-                <h3 class={`font-bold text-gray-900 ${
-                  section.level === 1 ? 'text-2xl' : 'text-xl'
-                }`} id={section.id}>
-                  {section.title}
-                </h3>
-              </div>
-              <div class="p-6">
-                <div class="prose prose-lg max-w-none text-gray-700" set:html={section.html}></div>
-              </div>
-            </section>
-          ))}
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-6">
+          <div class="prose prose-lg max-w-none text-gray-700" set:html={report.htmlContent}></div>
         </div>
-      ) : (
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
-          <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-            </svg>
-          </div>
-          <h3 class="text-xl font-bold text-gray-900 mb-2">Report Content</h3>
-          <p class="text-gray-600 mb-4">This report is being processed for optimal presentation.</p>
-          <div class="prose max-w-none text-gray-700" set:html={marked(report.markdownContent || 'No content available.')}></div>
-        </div>
-      )}
+      </div>
     </div>
       
       <!-- Report Metadata -->

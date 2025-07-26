@@ -28,7 +28,7 @@ ADD_RESPONSE=$(curl -s -X POST "$BASE_URL/.netlify/functions/publish-report" \
     -H "Content-Type: application/json" \
     -d '{
         "company_name": "'"$TEST_COMPANY"'",
-        "markdown_report": "# Test Report for Cleanup\n\n## Purpose\nThis report was created to test the cleanup system.\n\n## Details\n- Created: '"$(date)"'\n- Test ID: '"$TIMESTAMP"'\n- Will be cleaned up automatically\n\n## Test Results\nIf this report disappears after cleanup, the system is working correctly!",
+        "html_report": "<h1>Test Report for Cleanup</h1><h2>Purpose</h2><p>This report was created to test the cleanup system.</p><h2>Details</h2><ul><li>Created: '"$(date)"'</li><li>Test ID: '"$TIMESTAMP"'</li><li>Will be cleaned up automatically</li></ul><h2>Test Results</h2><p>If this report disappears after cleanup, the system is working correctly!</p>",
         "company_website": "https://test-cleanup-'"$TIMESTAMP"'.com"
     }')
 

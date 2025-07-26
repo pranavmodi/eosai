@@ -169,7 +169,7 @@ If you want to move your static reports to the database:
 # Publish a report
 curl -X POST https://possibleminds.in/.netlify/functions/publish-report \
   -H "Content-Type: application/json" \
-  -d '{"company_name": "Test Co", "markdown_report": "# Test"}'
+  -d '{"company_name": "Test Co", "html_report": "<h1>Test</h1>"}'
 
 # Deploy something (triggers rebuild)
 # Check if report still exists - it won't!
@@ -180,7 +180,7 @@ curl -X POST https://possibleminds.in/.netlify/functions/publish-report \
 # Publish a report
 curl -X POST https://possibleminds.in/.netlify/functions/publish-report \
   -H "Content-Type: application/json" \
-  -d '{"company_name": "Test Co", "markdown_report": "# Test"}'
+  -d '{"company_name": "Test Co", "html_report": "<h1>Test</h1>"}'
 
 # Deploy something (triggers rebuild)
 # Check if report still exists - it will!

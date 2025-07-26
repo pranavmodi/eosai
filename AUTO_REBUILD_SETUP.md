@@ -86,7 +86,7 @@ curl -X POST https://possibleminds.in/.netlify/functions/publish-report \
   -H "Content-Type: application/json" \
   -d '{
     "company_name": "Test Auto-Rebuild Company",
-    "markdown_report": "# Test Report\n\nThis report tests automatic rebuilds.",
+    "html_report": "<h1>Test Report</h1><p>This report tests automatic rebuilds.</p>",
     "company_website": "https://testcompany.com"
   }'
 ```

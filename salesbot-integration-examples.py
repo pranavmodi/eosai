@@ -33,7 +33,7 @@ def publish_report_to_website(company_id):
         # This is pseudocode - replace with your actual database queries
         company = get_company_by_id(company_id)  # Your function
         
-        if not company or not company.markdown_report:
+        if not company or not company.html_report:
             print(f"No report found for company {company_id}")
             return False
         
@@ -42,7 +42,7 @@ def publish_report_to_website(company_id):
             "company_id": company.id,
             "company_name": company.company_name,
             "company_website": company.website_url,
-            "markdown_report": company.markdown_report,
+            "html_report": company.html_report,
             "generated_date": company.updated_at.isoformat() if company.updated_at else datetime.now().isoformat(),
             "contact_id": getattr(company, 'contact_id', None)  # If you track contacts
         }
@@ -232,7 +232,7 @@ def cli_publish_report(company_name):
             click.echo(f"Company '{company_name}' not found")
             return
         
-        if not company.markdown_report:
+        if not company.html_report:
             click.echo(f"No report found for company '{company_name}'")
             return
         

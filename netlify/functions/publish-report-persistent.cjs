@@ -217,18 +217,21 @@ function processReportData(salesbotData) {
     company_id,
     company_name, 
     company_website,
-    markdown_report,
+    contact_id,
     generated_date,
-    contact_id 
+    html_report,
+    pdf_report_base64,
+    strategic_imperatives,
+    agent_recommendations
   } = salesbotData;
 
   // Generate a unique report ID
   const reportId = `${generateSlug(company_name)}-${Date.now()}`;
   const companySlug = generateSlug(company_name);
 
-  // Extract key metrics from the markdown (this would be more sophisticated in practice)
+  // Extract key metrics from the html (this would be more sophisticated in practice)
   const extractedMetrics = {
-    marketSize: "Market TBD", // These would be extracted from markdown_report
+    marketSize: "Market TBD", // These would be extracted from html_report
     growthRate: "Growth TBD",
     competitiveAdvantage: "Analysis Pending",
     riskLevel: "Medium"
@@ -251,18 +254,8 @@ function processReportData(salesbotData) {
       title: "Principal Strategy Consultant"
     },
     executiveSummary: "Comprehensive strategic analysis reveals significant opportunities for growth and operational optimization.",
-    strategicImperatives: [
-      "Digital transformation acceleration",
-      "Market expansion strategy execution",
-      "Operational excellence implementation",
-      "Customer experience optimization"
-    ],
-    agentRecommendations: [
-      "Leverage AI-driven analytics for decision making",
-      "Implement automated workflow optimization",
-      "Deploy predictive market analysis systems",
-      "Establish real-time performance monitoring"
-    ],
+    strategicImperatives: strategic_imperatives ? strategic_imperatives.split('\n') : [],
+    agentRecommendations: agent_recommendations ? agent_recommendations.split('\n') : [],
     marketAnalysis: "Market analysis indicates strong potential for strategic positioning and competitive advantage development.",
     competitivePosition: "Current market position offers significant opportunities for strategic advancement.",
     riskAssessment: "Comprehensive risk assessment identifies manageable challenges with clear mitigation strategies.",
@@ -271,7 +264,8 @@ function processReportData(salesbotData) {
     metrics: extractedMetrics,
     tags: ["Strategic Planning", "Business Analysis", "Market Research"],
     readTime: "12 min",
-    markdownContent: markdown_report,
+    htmlContent: html_report,
+    pdfReportBase64: pdf_report_base64,
     campaignData: {
       contactId: contact_id
     },
@@ -336,12 +330,12 @@ exports.handler = async (event, context) => {
     const salesbotData = JSON.parse(body);
     
     // Validate required fields
-    if (!salesbotData.company_name || !salesbotData.markdown_report) {
+    if (!salesbotData.company_name || !salesbotData.html_report) {
       return {
         statusCode: 400,
         headers,
         body: JSON.stringify({ 
-          error: 'Missing required fields: company_name and markdown_report' 
+          error: 'Missing required fields: company_name and html_report' 
         })
       };
     }

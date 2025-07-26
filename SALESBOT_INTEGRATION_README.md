@@ -184,7 +184,7 @@ curl -X POST https://possibleminds.in/.netlify/functions/publish-report \
   -H "X-Hub-Signature-256: sha256=YOUR_SIGNATURE" \
   -d '{
     "company_name": "Test Company",
-    "markdown_report": "# Test Report\n\nThis is a test.",
+    "html_report": "<h1>Test Report</h1><p>This is a test.</p>",
     "company_website": "https://testcompany.com"
   }'
 ```
