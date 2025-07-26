@@ -113,13 +113,7 @@ try {
     </div>
 
     <!-- Report Content -->
-    <div id="report-content" class="max-w-7xl mx-auto px-6 mb-8">
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="p-8">
-          <div class="prose prose-lg w-full max-w-none text-gray-700" set:html={report.htmlContent}></div>
-        </div>
-      </div>
-    </div>
+    <div id="report-content" set:html={report.htmlContent}></div>
       
       <!-- Report Metadata -->
       <div id="metadata" class="mt-8 bg-white border border-gray-200 rounded-lg p-6 max-w-7xl mx-auto">
