@@ -67,8 +67,6 @@ try {
           </button>
         </div>
         <nav class="space-y-3">
-          <a href="#strategic-imperatives" class="toc-link block text-sm text-gray-600 hover:text-purple-600 py-2 px-3 rounded hover:bg-purple-50 transition-colors" onclick="scrollToSection('strategic-imperatives')">Strategic Imperatives</a>
-          <a href="#agent-recommendations" class="toc-link block text-sm text-gray-600 hover:text-orange-600 py-2 px-3 rounded hover:bg-orange-50 transition-colors" onclick="scrollToSection('agent-recommendations')">AI Agent Recommendations</a>
           <a href="#report-content" class="toc-link block text-sm text-gray-600 hover:text-gray-900 py-2 px-3 rounded hover:bg-gray-50 transition-colors" onclick="scrollToSection('report-content')">Report Content</a>
           <a href="#metadata" class="toc-link block text-sm text-gray-600 hover:text-gray-900 py-2 px-3 rounded hover:bg-gray-50 transition-colors" onclick="scrollToSection('metadata')">Report Metadata</a>
         </nav>
@@ -86,118 +84,36 @@ try {
     </button>
 
     <!-- Executive Header -->
-    <div class="bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 text-white">
-      <div class="max-w-4xl mx-auto px-4 py-16">
-        <div class="mb-6">
-          <span class="inline-flex items-center px-4 py-2 bg-blue-600/20 rounded-full text-sm font-medium backdrop-blur-sm border border-blue-400/30">
-            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
+    <div class="bg-white border-b border-gray-200">
+      <div class="max-w-7xl mx-auto px-6 py-12">
+        <div class="mb-3">
+          <div class="text-sm font-medium text-gray-600 tracking-wider uppercase">
             Strategic Report • {report.industry}
-          </span>
+          </div>
         </div>
-        <h1 class="text-4xl md:text-5xl font-bold mb-4 leading-tight">
+        <h1 class="text-5xl md:text-6xl font-light text-gray-900 mb-6 leading-tight tracking-tight">
           {report.title}
         </h1>
-        <p class="text-xl text-blue-100 mb-8 leading-relaxed">
+        <p class="text-xl text-gray-600 mb-10 leading-relaxed max-w-4xl font-light">
           {report.subtitle}
         </p>
-        <div class="flex flex-wrap items-center gap-6 text-sm">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-full border-2 border-white/20 bg-blue-600 flex items-center justify-center">
-              <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-              </svg>
-            </div>
-            <div>
-              <div class="font-medium">Possible Minds AI Agent</div>
-              <div class="text-blue-200">Published {formattedDate}</div>
-            </div>
-          </div>
-          <div class="text-blue-200">
-            {report.readTime} read
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-8 text-sm text-gray-500">
+            <div class="font-medium text-gray-900">Possible Minds AI Agent</div>
+            <div>Published {formattedDate}</div>
+            <div>{report.readTime} read</div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Executive Summary Cards -->
-    <div id="executive-summary" class="max-w-6xl mx-auto px-4 pt-12">
+    <div id="executive-summary" class="max-w-7xl mx-auto px-6 pt-12">
 
     </div>
 
-    <!-- Strategic Imperatives -->
-    {report.strategicImperatives && report.strategicImperatives.length > 0 && (
-      <div id="strategic-imperatives" class="max-w-4xl mx-auto px-4 mb-8">
-        <div class="bg-gradient-to-r from-purple-50 to-violet-50 rounded-2xl p-8 border border-purple-100">
-          <div class="flex items-center justify-between mb-6">
-            <div class="flex items-center">
-              <div class="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.031 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                </svg>
-              </div>
-              <h2 class="text-2xl font-bold text-gray-900 ml-4">Strategic Imperatives</h2>
-            </div>
-            <button onclick="toggleSection('strategic-imperatives-content')" class="text-gray-400 hover:text-gray-600 no-print">
-              <svg class="w-5 h-5 transform transition-transform" id="strategic-imperatives-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </button>
-          </div>
-          <div id="strategic-imperatives-content" class="space-y-4">
-            {report.strategicImperatives.map((imperative, index) => (
-              <div class="flex items-start">
-                <div class="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold mt-1">
-                  {index + 1}
-                </div>
-                <div class="ml-4 text-gray-700 leading-relaxed">
-                  {imperative}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    )}
-
-    <!-- Agent Recommendations -->
-    {report.agentRecommendations && report.agentRecommendations.length > 0 && (
-      <div id="agent-recommendations" class="max-w-4xl mx-auto px-4 mb-8">
-        <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-8 border border-orange-100">
-          <div class="flex items-center justify-between mb-6">
-            <div class="flex items-center">
-              <div class="w-12 h-12 bg-orange-600 rounded-full flex items-center justify-center">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                </svg>
-              </div>
-              <h2 class="text-2xl font-bold text-gray-900 ml-4">AI Agent Recommendations</h2>
-            </div>
-            <button onclick="toggleSection('agent-recommendations-content')" class="text-gray-400 hover:text-gray-600 no-print">
-              <svg class="w-5 h-5 transform transition-transform" id="agent-recommendations-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </button>
-          </div>
-          <div id="agent-recommendations-content" class="space-y-4">
-            {report.agentRecommendations.map((recommendation, index) => (
-              <div class="flex items-start">
-                <div class="flex-shrink-0 w-8 h-8 bg-orange-600 text-white rounded-full flex items-center justify-center text-sm font-bold mt-1">
-                  {index + 1}
-                </div>
-                <div class="ml-4 text-gray-700 leading-relaxed">
-                  {recommendation}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    )}
-
     <!-- Report Content -->
-    <div id="report-content" class="max-w-4xl mx-auto px-4 mb-8">
+    <div id="report-content" class="max-w-7xl mx-auto px-6 mb-8">
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="p-6">
           <div class="prose prose-lg max-w-none text-gray-700" set:html={report.htmlContent}></div>
@@ -206,7 +122,7 @@ try {
     </div>
       
       <!-- Report Metadata -->
-      <div id="metadata" class="mt-8 bg-white border border-gray-200 rounded-lg p-6">
+      <div id="metadata" class="mt-8 bg-white border border-gray-200 rounded-lg p-6 max-w-7xl mx-auto">
         <h3 class="text-lg font-bold text-gray-900 mb-4">Report Metadata</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div><strong>Company:</strong> {report.companyName}</div>
@@ -237,7 +153,7 @@ try {
       </div>
 
       <!-- CTA Section -->
-      <section class="mt-12 bg-gradient-to-r from-blue-700 to-blue-800 text-white p-8 rounded-2xl shadow-xl">
+      <section class="mt-12 bg-gradient-to-r from-blue-700 to-blue-800 text-white p-8 rounded-2xl shadow-xl max-w-7xl mx-auto">
         <h2 class="text-2xl font-bold mb-4">Ready to Transform Your Business?</h2>
         <p class="text-blue-100 mb-6 text-lg">
           This strategic analysis represents just the beginning. Let's discuss how we can implement these recommendations and drive measurable results for your organization.
@@ -318,7 +234,7 @@ try {
 
     // Highlight active TOC link based on scroll position
     function updateActiveTOCLink() {
-      const sections = ['strategic-imperatives', 'agent-recommendations', 'report-content', 'metadata'];
+      const sections = ['report-content', 'metadata'];
       const tocLinks = document.querySelectorAll('.toc-link');
       
       let activeSection = '';
@@ -479,8 +395,8 @@ try {
       .text-blue-100, .text-blue-200 { color: #374151 !important; }
       
       /* Optimize layout for print */
-      .max-w-4xl, .max-w-6xl { max-width: 100% !important; }
-      .px-4 { padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+      .max-w-4xl, .max-w-6xl, .max-w-7xl { max-width: 100% !important; }
+      .px-4, .px-6 { padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
       
       /* Executive header adjustments */
       .bg-gradient-to-r.from-slate-900 {

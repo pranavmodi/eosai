@@ -112,9 +112,7 @@ function processReportData(salesbotData) {
     contact_id,
     generated_date,
     html_report,
-    pdf_report_base64,
-    strategic_imperatives,
-    agent_recommendations
+    pdf_report_base64
   } = salesbotData;
 
   // Generate a unique report ID
@@ -146,8 +144,6 @@ function processReportData(salesbotData) {
       title: "Principal Strategy Consultant"
     },
     executiveSummary: "Comprehensive strategic analysis reveals significant opportunities for growth and operational optimization.",
-    strategicImperatives: strategic_imperatives ? strategic_imperatives.split('\n') : [],
-    agentRecommendations: agent_recommendations ? agent_recommendations.split('\n') : [],
     marketAnalysis: "Market analysis indicates strong potential for strategic positioning and competitive advantage development.",
     competitivePosition: "Current market position offers significant opportunities for strategic advancement.",
     riskAssessment: "Comprehensive risk assessment identifies manageable challenges with clear mitigation strategies.",
