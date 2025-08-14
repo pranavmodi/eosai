@@ -4,9 +4,13 @@ const navItems = [
   { text: 'Features', href: '/#features' },
   { text: 'Pricing', href: '/#pricing' },
   { text: 'Reports', href: '/reports' },
-  { text: 'Audit', href: '/agent-readiness-audit' },
   { text: 'Blog', href: '/#blog' },
   { text: 'Contact', href: '/contact' },
+];
+
+const toolsDropdown = [
+  { text: 'Agent Readiness Audit', href: '/agent-readiness-audit' },
+  { text: 'AI Pre-Flight Checklist', href: '/ai-preflight-checklist' },
 ];
 ---
 
@@ -25,6 +29,31 @@ const navItems = [
             {item.text}
           </a>
         ))}
+        
+        <!-- Tools Dropdown -->
+        <div class="ml-8 relative group">
+          <button class="text-gray-700 hover:text-primary transition-colors flex items-center">
+            Tools
+            <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+          
+          <!-- Dropdown Menu -->
+          <div class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+            <div class="py-1" role="menu">
+              {toolsDropdown.map(item => (
+                <a
+                  href={item.href}
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
+                  role="menuitem"
+                >
+                  {item.text}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </nav>
