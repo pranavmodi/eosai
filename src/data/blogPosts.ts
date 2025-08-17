@@ -13,6 +13,18 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
   {
+    title: "The Real Reason AI Evals Matter for Your Business",
+    excerpt: "Beyond accuracy metrics: why AI evaluations are your competitive advantage and the key to responsible AI deployment that actually drives business value.",
+    image: "/blog/ai-enterprise.jpg",
+    date: "Aug 17, 2024",
+    author: {
+      name: "Pranav Modi",
+      avatar: "/authors/pranav-modi.jpg"
+    },
+    category: "AI Strategy",
+    readTime: "7 min"
+  },
+  {
     title: "Why AI is the Future of Sales and Support",
     excerpt: "AI is no longer a shiny sidekick; it's already outperforming human reps in speed, accuracy, and customer satisfaction. Here's why—and how PossibleMinds Supportbot makes it painless.",
     image: "/blog/prodbot.jpg",
