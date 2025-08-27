@@ -9,6 +9,7 @@ import FeaturesSection from '../components/FeaturesSection.astro';
 import TestimonialSection from '../components/TestimonialSection.astro';
 import BlogSection from '../components/home/BlogSection.astro';
 import CTASection from '../components/shared/CTASection.astro';
+import { API_BASE_URL, TENANT_ID } from '../utils/env';
 
 const services = [
   {
@@ -78,11 +79,30 @@ const testimonials = [
   <div id="chatbot-container"></div>
 
   <!-- Step 2: Include React libraries -->
-  <script is:inline src="https://api.possibleminds.in/static/vendor/react.production.min.js"></script>
-  <script is:inline src="https://api.possibleminds.in/static/vendor/react-dom.production.min.js"></script>
+  <script is:inline define:vars={{ apiBaseUrl: API_BASE_URL, tenantId: TENANT_ID }}>
+    (function() {
+      try {
+        console.log('[Widget] apiBaseUrl =', apiBaseUrl);
+        console.log('[Widget] tenantId =', tenantId);
+        const reactUrl = `${apiBaseUrl}/static/vendor/react.production.min.js`;
+        const reactDomUrl = `${apiBaseUrl}/static/vendor/react-dom.production.min.js`;
+        const widgetUrl = `${apiBaseUrl}/static/precisemri-chat-widget.min.js`;
+        console.log('[Widget] React URL =', reactUrl);
+        console.log('[Widget] ReactDOM URL =', reactDomUrl);
+        console.log('[Widget] Widget URL =', widgetUrl);
+        if (!/^https?:\/\//i.test(apiBaseUrl)) {
+          console.warn('[Widget] apiBaseUrl does not start with http/https:', apiBaseUrl);
+        }
+      } catch (e) {
+        console.error('[Widget] Preload debug error:', e);
+      }
+    })();
+  </script>
+  <script is:inline src={`${API_BASE_URL}/static/vendor/react.production.min.js`}></script>
+  <script is:inline src={`${API_BASE_URL}/static/vendor/react-dom.production.min.js`}></script>
 
   <!-- Step 3: Configure the widget -->
-  <script is:inline>
+  <script is:inline define:vars={{ apiBaseUrl: API_BASE_URL, tenantId: TENANT_ID }}>
     window.CHATBOT_CONFIG = {
       // --- Customizable Settings ---
       primaryColor: "#0066cc",       // Main color theme
@@ -92,8 +112,8 @@ const testimonials = [
       welcomeMessage: "Hello! How can I help you today?", // Welcome message
       placeholder: "Type your message...", // Placeholder text in the input
       // --- Server Configuration (Do Not Change Without Server Update) ---
-      apiUrl: "https://api.possibleminds.in/api/v1/chat/", // API endpoint
-      tenantId: "3efc36dc-baca-4001-b884-f551df05d095", // Your unique tenant ID
+      apiUrl: `${apiBaseUrl}/api/v1/chat/`, // API endpoint
+      tenantId: tenantId, // Your unique tenant ID
       // --- New Positioning Styles ---
       widgetPositionStyles: {
           position: 'fixed',
@@ -105,23 +125,45 @@ const testimonials = [
   </script>
 
   <!-- Step 4: Load the widget script -->
-  <script is:inline src="https://api.possibleminds.in/static/precisemri-chat-widget.min.js"></script>
+  <script is:inline src={`${API_BASE_URL}/static/precisemri-chat-widget.min.js`}></script>
 
   <!-- Step 5: Initialize the widget -->
   <script is:inline>
     (function() {
       // Ensure the container ID here matches the ID in step 1
       const container = document.getElementById('chatbot-container');
+      console.log('[Widget] container present =', !!container);
+      console.log('[Widget] window.React present =', !!window.React);
+      console.log('[Widget] window.ReactDOM present =', !!window.ReactDOM);
+      console.log('[Widget] window.PreciseMRIChatWidget present =', !!(window).PreciseMRIChatWidget);
+      if (!(window).PreciseMRIChatWidget) {
+        console.warn('[Widget] PreciseMRIChatWidget not found yet. It may still be loading.');
+      }
       if (container && window.PreciseMRIChatWidget && window.PreciseMRIChatWidget.mount) {
         window.PreciseMRIChatWidget.mount(container);
         console.log("Possible Minds Chat Widget Initialized.");
       } else {
         // Retry initialization after a short delay, as scripts might load out of order
         setTimeout(() => {
+          console.log('[Widget] Retry check - container:', !!container, 'React:', !!window.React, 'ReactDOM:', !!window.ReactDOM, 'Widget:', !!(window).PreciseMRIChatWidget);
           if (container && window.PreciseMRIChatWidget && window.PreciseMRIChatWidget.mount) {
              window.PreciseMRIChatWidget.mount(container);
              console.log("Possible Minds Chat Widget Initialized (after delay).");
           } else {
+            if (!container) {
+              console.error('[Widget] Initialization failed: container #chatbot-container not found');
+            }
+            if (!window.React) {
+              console.error('[Widget] Initialization failed: window.React not loaded');
+            }
+            if (!window.ReactDOM) {
+              console.error('[Widget] Initialization failed: window.ReactDOM not loaded');
+            }
+            if (!(window).PreciseMRIChatWidget) {
+              console.error('[Widget] Initialization failed: window.PreciseMRIChatWidget not loaded');
+            } else if (!window.PreciseMRIChatWidget.mount) {
+              console.error('[Widget] Initialization failed: window.PreciseMRIChatWidget.mount missing');
+            }
             console.error("Could not initialize Possible Minds Chat Widget. Container or Widget script not found.");
           }
         }, 500); // Wait 500ms

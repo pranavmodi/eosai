@@ -1,5 +1,6 @@
 ---
 import HeroButton from './HeroButton.astro';
+import { API_BASE_URL } from '../../utils/env';
 ---
 
 <div class="text-white">
@@ -28,7 +29,7 @@ import HeroButton from './HeroButton.astro';
 
   <div class="flex flex-col items-center gap-2">
     <HeroButton 
-      href="https://api.possibleminds.in/static/control_panel.html" 
+      href={`${API_BASE_URL}/static/control_panel.html`} 
       variant="primary"
       target="_blank"
       rel="noopener noreferrer"
